@@ -22,7 +22,6 @@ def create_ones(
     x = torch.ones(shape, dtype=dtype)
     # Save reference
     save_reference(x, dir, name)
-    return x
 
 if __name__ == "__main__":
     create_ones((2, 3), dtype=torch.float32, dir="data", name="ones")
