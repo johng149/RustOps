@@ -4,13 +4,12 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-ndarray = "0.16"
-nalgebra = "0.33"
-nshare = "0.10"
+ndarray = "0.15"
 num-traits = "0.2"
-ndarray-npy = "0.9.1"
+ndarray-npy = "0.8.1"
 thiserror = "2.0.12"
 ndarray-linalg = "0.17"
+ndarray_einsum_beta = "0.7.0"
 
 [dev-dependencies]
 approx = "0.4"
