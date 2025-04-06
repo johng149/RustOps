@@ -29,6 +29,10 @@ def create_expand(
 if __name__ == "__main__":
     d2 = (10, 11)
     d3 = (10, 11, 12)
+    d4 = (10, 11, 12, 13)
+    d5 = (10, 11, 12, 13, 14)
 
     create_expand(d2, dir="data", name="expand2d")
     create_expand(d3, dir="data", name="expand3d")
+    create_expand(d4, dir="data", name="expand4d")
+    create_expand(d5, dir="data", name="expand5d")
