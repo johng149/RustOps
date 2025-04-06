@@ -4,7 +4,7 @@ from typing import Tuple, List, Iterable
 
 
 def test_slicing(
-    shape: Tuple[int, ...],
+    shape: Tuple[int, ...] | List[int] | Iterable[int],
     dtype: torch.dtype = torch.float32,
     dir: str = "data",
     name: str = "sliced",
