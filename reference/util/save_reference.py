@@ -9,7 +9,7 @@ def save_reference(
     name: str,
 ):
     """
-    Save given tensor as npz file
+    Save given tensor as npy file
     Args:
         x (Tensor): Tensor to save
         dir (str): Directory to save the tensor
@@ -19,5 +19,5 @@ def save_reference(
     os.makedirs(dir, exist_ok=True)
     # Convert tensor to numpy array
     x_np = x.detach().cpu().numpy()
-    # Save numpy array as npz file
-    np.savez_compressed(os.path.join(dir, name), x=x_np)
+    # Save numpy array as npy file
+    np.save(os.path.join(dir, name), x_np)
