@@ -15,8 +15,6 @@ def create_argmax(
         dtype (torch.dtype): Data type of the tensor. Default is torch.float32.
         dir (str): Directory to save the reference tensor. Default is "../data".
         name (str): Name of the reference tensor file. Default is "argmax".
-    Returns:
-        Tensor: Tensor of argmax values with the given shape and dtype.
     """
     x = torch.rand(shape, dtype=dtype)
     # get max_v and max_i for each dimension, and save them separately, also save original `x`

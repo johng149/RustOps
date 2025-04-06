@@ -15,8 +15,6 @@ def create_ones(
         dtype (torch.dtype): Data type of the tensor. Default is torch.float32.
         dir (str): Directory to save the reference tensor. Default is "../data".
         name (str): Name of the reference tensor file. Default is "ones".
-    Returns:
-        Tensor: Tensor of ones with the given shape and dtype.
     """
     # Create a tensor of ones
     x = torch.ones(shape, dtype=dtype)

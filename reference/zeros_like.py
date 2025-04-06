@@ -16,8 +16,6 @@ def create_zeros_like(
         dtype (torch.dtype): Data type of the tensor. Default is torch.float32.
         dir (str): Directory to save the reference tensor. Default is "data".
         name (str): Name of the reference tensor file. Default is "zeros_like".
-    Returns:
-        Tensor: Tensor of zeros with the given shape and dtype.
     """
     x = torch.rand(shape, dtype=dtype)
     zeros = torch.zeros_like(x)
