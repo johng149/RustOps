@@ -18,7 +18,7 @@ def create_argmax(
     """
     x = torch.rand(shape, dtype=dtype)
     # get max_v and max_i for each dimension, and save them separately, also save original `x`
-    save_reference(x, dir, f"{name}argmax_x")
+    save_reference(x, dir, f"{name}_argmax_x")
     for dim in range(len(shape)):
         argmaxed = torch.argmax(x, dim=dim)
         argmaxed_keepdim = torch.argmax(x, dim=dim, keepdim=True)
@@ -26,4 +26,4 @@ def create_argmax(
         save_reference(argmaxed_keepdim, dir, f"{name}argmax_dim{dim}_yeskeepdim")
 
 if __name__ == "__main__":
-    create_argmax((6, 7, 8, 9, 10, 11, 12), dtype=torch.float32, dir="data", name="argmax")
+    create_argmax((6, 7, 8, 9, 10, 11), dtype=torch.float32, dir="data", name="argmax")
