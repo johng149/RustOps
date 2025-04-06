@@ -13,3 +13,4 @@ ndarray_einsum_beta = "0.7.0"
 
 [dev-dependencies]
 approx = "0.4"
+num-traits = "0.2"
