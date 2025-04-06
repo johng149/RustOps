@@ -18,7 +18,7 @@ def create_sort(
     """
     x = torch.rand(shape, dtype=dtype)
     # Save the original tensor
-    save_reference(x, dir, f"{name}_x")
+    save_reference(x, dir, f"{name}_sort_x")
     for dim in range(len(shape)):
         sorted_v, sorted_i = torch.sort(x, dim=dim)
         save_reference(sorted_v, dir, f"{name}_sorted_v_dim{dim}")
