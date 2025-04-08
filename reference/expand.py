@@ -19,7 +19,7 @@ def create_expand(
     """
     assert len(shape) > 0, "Shape must be a non-empty tuple or list."
     x = torch.randn(shape, dtype=dtype)
-    save_reference(x, dir, f"{name}_original")  # Save the original tensor
+    save_reference(x, dir, f"{name}_original_expand_dim")  # Save the original tensor
 
     for dim in range(len(shape) + 1):
         # Unsqueeze and expand the tensor along the current dimension
