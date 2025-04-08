@@ -4,3 +4,4 @@ pub mod einsum;
 pub mod expand;
 pub mod gather;
 pub mod max;
+pub mod ones;
