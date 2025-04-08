@@ -18,11 +18,11 @@ def create_max(
     """
     x = torch.rand(shape, dtype=dtype)
     # get max_v and max_i for each dimension, and save them separately, also save original `x`
-    save_reference(x, dir, f"{name}max_x")
+    save_reference(x, dir, f"{name}_max_x")
     for dim in range(len(shape)):
         max_v, max_i = torch.max(x, dim=dim)
-        save_reference(max_v, dir, f"{name}max_v_dim{dim}")
-        save_reference(max_i, dir, f"{name}max_i_dim{dim}")
+        save_reference(max_v, dir, f"{name}_max_v_dim{dim}")
+        save_reference(max_i, dir, f"{name}_max_i_dim{dim}")
 
 if __name__ == "__main__":
     create_max((6, 7, 8, 9, 10, 11, 12), dtype=torch.float32, dir="data", name="max")
