@@ -5,5 +5,6 @@ pub mod expand;
 pub mod gather;
 pub mod max;
 pub mod ones;
+pub mod rearrange;
 pub mod reshape;
 pub mod transpose;
