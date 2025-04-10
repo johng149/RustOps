@@ -9,4 +9,5 @@ pub mod rearrange;
 pub mod reduce;
 pub mod reshape;
 pub mod scatter;
+pub mod slicing;
 pub mod transpose;
