@@ -19,10 +19,11 @@ def create_sort(
     x = torch.rand(shape, dtype=dtype)
     # Save the original tensor
     save_reference(x, dir, f"{name}_sort_x")
-    for dim in range(len(shape)):
-        sorted_v, sorted_i = torch.sort(x, dim=dim)
-        save_reference(sorted_v, dir, f"{name}_sorted_v_dim{dim}")
-        save_reference(sorted_i, dir, f"{name}_sorted_i_dim{dim}")
+    dim= len(shape) - 1
+    sorted_v, sorted_i = torch.sort(x, dim=dim)
+    save_reference(sorted_v, dir, f"{name}_sorted_v_dim{dim}")
+    save_reference(sorted_i, dir, f"{name}_sorted_i_dim{dim}")
 
 if __name__ == "__main__":
     create_sort((6, 7, 8, 9, 10, 11, 12), dtype=torch.float32, dir="data", name="sort")
+    create_sort((2, 3, 2), dtype=torch.float32, dir="data", name="sortsmall")
