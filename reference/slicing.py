@@ -26,27 +26,28 @@ def test_slicingccn1(
 
 def test_slicingcb(
     shape: Tuple[int, ...] | List[int] | Iterable[int],
+    slice_amount: int,
     dtype: torch.dtype = torch.float32,
     dir: str = "data",
     name: str = "sliced",
 ):
     """
-    Test slicing operation `[:, :batch_size]` on a tensor. Here `batch_size` is the second dimension of the tensor
-    minus one
+    Test slicing operation `[:, :batch_size]` on a tensor. Here `batch_size` is given
     Args:
         shape (Tuple[int, ...]): Shape of the tensor to create.
+        slice_amount (int): Amount to slice from the tensor.
         dtype (torch.dtype): Data type of the tensor. Default is torch.float32.
         dir (str): Directory to save the reference tensor. Default is "data".
         name (str): Name of the reference tensor file. Default is "sliced".
     """
     x = torch.rand(shape, dtype=dtype)
-    y = x[:, :shape[1]-1]
+    y = x[:, :slice_amount]
     # Save the original tensor
     save_reference(x, dir, f"{name}_sliced[:, :batch_size]_x")
     # Save the sliced tensor
-    save_reference(y, dir, f"{name}_sliced[:, :batch_size]_y")
+    save_reference(y, dir, f"{name}_{slice_amount}_sliced[:, :batch_size]_y")
 
 
 if __name__ == "__main__":
     test_slicingccn1((2, 3, 4), dtype=torch.float32, dir="data", name="sliced")
-    test_slicingcb((3, 4), dtype=torch.float32, dir="data", name="sliced")
+    test_slicingcb((3, 4), slice_amount=3, dtype=torch.float32, dir="data", name="sliced")
