@@ -12,4 +12,5 @@ pub mod scatter;
 pub mod slicing;
 pub mod sort;
 pub mod sqrt;
+pub mod squeeze;
 pub mod transpose;
