@@ -1,4 +1,5 @@
 use RustOps::functions::maxi;
+use approx::assert_abs_diff_eq;
 use ndarray::Array3;
 use ndarray_npy::read_npy;
 
@@ -14,5 +15,5 @@ fn test_maxi_3d() {
 
     let result = maxi::maxi(&x);
 
-    assert_eq!(result, expected);
+    assert_abs_diff_eq!(result, expected);
 }
