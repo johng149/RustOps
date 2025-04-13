@@ -9,7 +9,7 @@ fn test_zeros_like_ndarray_7d() {
     let x: ArrayD<f32> = read_npy(xfile).unwrap();
     let y: ArrayD<f32> = read_npy(yfile).unwrap();
 
-    let result = zeros_like::zeros_like(&x);
+    let result: ArrayD<f32> = zeros_like::zeros_like(&x);
 
     assert_eq!(result, y);
 }

@@ -1,4 +1,5 @@
 use ndarray::{Array, ArrayBase, Data, Dimension};
+use num_traits::Zero;
 
 // filepath: /media/john/Tertiary/Projects/ML/RustOps/src/functions/zeros_like.rs
 
@@ -11,8 +12,9 @@ use ndarray::{Array, ArrayBase, Data, Dimension};
 /// # Returns
 ///
 /// An ndarray Array of the same shape as input, filled with zeros.
-pub fn zeros_like<S, D>(input: &ArrayBase<S, D>) -> Array<f32, D>
+pub fn zeros_like<T, S, D>(input: &ArrayBase<S, D>) -> Array<T, D>
 where
+    T: Zero + Clone,
     S: Data,
     D: Dimension,
 {
