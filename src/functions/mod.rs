@@ -15,3 +15,4 @@ pub mod sqrt;
 pub mod squeeze;
 pub mod transpose;
 pub mod unsqueeze;
+pub mod wheres;
