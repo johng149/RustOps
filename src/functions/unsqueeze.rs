@@ -1,4 +1,5 @@
 use ndarray::{ArrayD, IxDyn};
+use std::clone::Clone;
 
 /// Unsqueeze a tensor by adding a dimension of size 1 at the specified index.
 ///
@@ -10,7 +11,7 @@ use ndarray::{ArrayD, IxDyn};
 /// # Returns
 ///
 /// The unsqueezed tensor.
-pub fn unsqueeze(input: &ArrayD<f32>, dim: usize) -> ArrayD<f32> {
+pub fn unsqueeze<T: Clone>(input: &ArrayD<T>, dim: usize) -> ArrayD<T> {
     let input_shape = input.shape();
 
     // Create a new shape with an additional dimension of size 1 at the specified index
