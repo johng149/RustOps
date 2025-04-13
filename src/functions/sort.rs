@@ -1,4 +1,7 @@
-use ndarray::{ArrayD, Axis, IxDyn};
+use ndarray::Zip;
+use ndarray::prelude::*;
+use ndarray::{Array, ArrayD, Axis, IxDyn};
+use ndarray::{Data, DataMut, Slice};
 use std::cmp::Ordering;
 
 /// Sorts each slice along the last dimension of the ArrayD in place.
@@ -58,6 +61,66 @@ where
             for (view_elem, sorted_elem) in lane.iter_mut().zip(temp_vec.into_iter()) {
                 *view_elem = sorted_elem;
             }
+        }
+    }
+}
+
+pub fn argsort_last_dim(arr: &ArrayD<f32>) -> ArrayD<usize> {
+    // Get the shape of the input array
+    let shape = arr.shape().to_vec();
+
+    // If the array is empty, return an empty array
+    if shape.is_empty() {
+        return ArrayD::from_elem(IxDyn(&[]), 0);
+    }
+
+    // Create a result array with the same shape as the input
+    let mut result = ArrayD::zeros(IxDyn(&shape));
+
+    // Call the recursive helper function to fill the result array
+    fill_result_recursive(arr, &mut result, &mut Vec::new(), &shape);
+
+    result
+}
+
+fn fill_result_recursive(
+    arr: &ArrayD<f32>,
+    result: &mut ArrayD<usize>,
+    indices: &mut Vec<usize>,
+    shape: &[usize],
+) {
+    if indices.len() == shape.len() - 1 {
+        // We've reached the penultimate dimension, now handle the last dimension
+        let last_dim_size = shape.last().unwrap();
+
+        // Create a vector of indices for the slice along the last dimension
+        let mut indices_vec: Vec<usize> = (0..*last_dim_size).collect();
+
+        // Sort the indices based on the values in the slice
+        indices_vec.sort_by(|&i, &j| {
+            let mut i_indices = indices.clone();
+            i_indices.push(i);
+            let mut j_indices = indices.clone();
+            j_indices.push(j);
+
+            let a = *arr.get(i_indices.as_slice()).unwrap();
+            let b = *arr.get(j_indices.as_slice()).unwrap();
+
+            a.partial_cmp(&b).unwrap_or(Ordering::Equal)
+        });
+
+        // Store the sorted indices in the result array
+        for i in 0..*last_dim_size {
+            let mut result_indices = indices.clone();
+            result_indices.push(i);
+            *result.get_mut(result_indices.as_slice()).unwrap() = indices_vec[i];
+        }
+    } else {
+        // Recurse into the next dimension
+        for i in 0..shape[indices.len()] {
+            indices.push(i);
+            fill_result_recursive(arr, result, indices, shape);
+            indices.pop();
         }
     }
 }

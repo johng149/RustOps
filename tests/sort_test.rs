@@ -1,8 +1,10 @@
+use RustOps::functions::sort::argsort_last_dim;
 use RustOps::functions::sort::sort_last_dim;
 use approx::assert_abs_diff_eq;
 use ndarray::array;
 use ndarray::{Array2, Array3, ArrayD, Axis};
 use ndarray_npy::read_npy;
+use rayon::result;
 
 #[test]
 fn test_sort_big() {
@@ -14,9 +16,13 @@ fn test_sort_big() {
     let sort: ArrayD<f32> = read_npy(sortfile).unwrap();
     let y: ArrayD<i64> = read_npy(indexfile).unwrap();
 
+    let result_indices = argsort_last_dim(&x);
+    let result_indicesi64 = result_indices.mapv(|x| x as i64);
     let result = sort_last_dim(&mut x);
+    // let result_indices = argsort_last_dim(&x);
 
     assert_abs_diff_eq!(x, sort, epsilon = 1e-5);
+    assert_eq!(result_indicesi64, y);
 }
 
 #[test]
@@ -29,7 +35,10 @@ fn test_sort() {
     let sort: ArrayD<f32> = read_npy(sortfile).unwrap();
     let y: ArrayD<i64> = read_npy(indexfile).unwrap();
 
+    let result_indices = argsort_last_dim(&x);
+    let result_indicesi64 = result_indices.mapv(|x| x as i64);
     let result = sort_last_dim(&mut x);
 
     assert_abs_diff_eq!(x, sort, epsilon = 1e-5);
+    assert_eq!(result_indicesi64, y);
 }

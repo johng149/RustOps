@@ -26,4 +26,4 @@ def create_sort(
 
 if __name__ == "__main__":
     create_sort((6, 7, 8, 9, 10, 11, 12), dtype=torch.float32, dir="data", name="sort")
-    create_sort((2, 3, 2), dtype=torch.float32, dir="data", name="sortsmall")
+    create_sort((2, 3, 3), dtype=torch.float32, dir="data", name="sortsmall")
