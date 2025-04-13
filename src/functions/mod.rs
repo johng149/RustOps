@@ -4,6 +4,7 @@ pub mod einsum;
 pub mod expand;
 pub mod gather;
 pub mod max;
+pub mod maxi;
 pub mod ones;
 pub mod rearrange;
 pub mod reduce;
