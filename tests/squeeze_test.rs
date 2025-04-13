@@ -70,6 +70,16 @@ fn test_squeeze_ndarray() {
 
             // Assert equality
             assert_eq!(result, expected);
+
+            // Assert shapes are equal
+            assert_eq!(
+                result.shape(),
+                expected.shape(),
+                "Shape mismatch for {}. Got {:?}, expected {:?}",
+                test_file,
+                result.shape(),
+                expected.shape()
+            );
         } else {
             panic!("Invalid test file format: {}", test_file);
         }
