@@ -74,7 +74,7 @@ where
     result
 }
 
-pub fn argsort_last_dim<A>(arr: &ArrayD<A>) -> ArrayD<usize>
+pub fn argsort_last_dim<A>(arr: &ArrayD<A>) -> ArrayD<i64>
 where
     A: PartialOrd + Clone,
 {
@@ -83,11 +83,11 @@ where
 
     // If the array is empty, return an empty array
     if shape.is_empty() {
-        return ArrayD::from_elem(IxDyn(&[]), 0);
+        return ArrayD::<i64>::from_elem(IxDyn(&[]), 0); // Changed from i32 to i64
     }
 
     // Create a result array with the same shape as the input
-    let mut result = ArrayD::zeros(IxDyn(&shape));
+    let mut result = ArrayD::<i64>::zeros(IxDyn(&shape)); // Changed from i32 to i64
 
     // Call the recursive helper function to fill the result array
     fill_result_recursive(arr, &mut result, &mut Vec::new(), &shape);
@@ -97,7 +97,7 @@ where
 
 fn fill_result_recursive<A>(
     arr: &ArrayD<A>,
-    result: &mut ArrayD<usize>,
+    result: &mut ArrayD<i64>, // Changed from i32 to i64
     indices: &mut Vec<usize>,
     shape: &[usize],
 ) where
@@ -123,11 +123,11 @@ fn fill_result_recursive<A>(
             a.partial_cmp(b).unwrap_or(Ordering::Equal)
         });
 
-        // Store the sorted indices in the result array
+        // Store the sorted indices in the result array as i64
         for i in 0..*last_dim_size {
             let mut result_indices = indices.clone();
             result_indices.push(i);
-            *result.get_mut(result_indices.as_slice()).unwrap() = indices_vec[i];
+            *result.get_mut(result_indices.as_slice()).unwrap() = indices_vec[i] as i64; // Changed from i32 to i64
         }
     } else {
         // Recurse into the next dimension

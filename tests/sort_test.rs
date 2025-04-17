@@ -17,12 +17,11 @@ fn test_sort_big() {
     let y: ArrayD<i64> = read_npy(indexfile).unwrap();
 
     let result_indices = argsort_last_dim(&x);
-    let result_indicesi64 = result_indices.mapv(|x| x as i64);
     let result = sort_last_dim(&x);
     // let result_indices = argsort_last_dim(&x);
 
     assert_abs_diff_eq!(result, sort, epsilon = 1e-5);
-    assert_eq!(result_indicesi64, y);
+    assert_eq!(result_indices, y);
 }
 
 #[test]
@@ -36,9 +35,8 @@ fn test_sort() {
     let y: ArrayD<i64> = read_npy(indexfile).unwrap();
 
     let result_indices = argsort_last_dim(&x);
-    let result_indicesi64 = result_indices.mapv(|x| x as i64);
     let result = sort_last_dim(&x);
 
     assert_abs_diff_eq!(result, sort, epsilon = 1e-5);
-    assert_eq!(result_indicesi64, y);
+    assert_eq!(result_indices, y);
 }
