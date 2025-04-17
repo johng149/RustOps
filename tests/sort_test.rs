@@ -12,16 +12,16 @@ fn test_sort_big() {
     let sortfile = "data/sort_sorted_v_dim6.npy";
     let indexfile = "data/sort_sorted_i_dim6.npy";
 
-    let mut x: ArrayD<f32> = read_npy(xfile).unwrap();
+    let x: ArrayD<f32> = read_npy(xfile).unwrap();
     let sort: ArrayD<f32> = read_npy(sortfile).unwrap();
     let y: ArrayD<i64> = read_npy(indexfile).unwrap();
 
     let result_indices = argsort_last_dim(&x);
     let result_indicesi64 = result_indices.mapv(|x| x as i64);
-    let result = sort_last_dim(&mut x);
+    let result = sort_last_dim(&x);
     // let result_indices = argsort_last_dim(&x);
 
-    assert_abs_diff_eq!(x, sort, epsilon = 1e-5);
+    assert_abs_diff_eq!(result, sort, epsilon = 1e-5);
     assert_eq!(result_indicesi64, y);
 }
 
@@ -31,14 +31,14 @@ fn test_sort() {
     let sortfile = "data/sortsmall_sorted_v_dim2.npy";
     let indexfile = "data/sortsmall_sorted_i_dim2.npy";
 
-    let mut x: ArrayD<f32> = read_npy(xfile).unwrap();
+    let x: ArrayD<f32> = read_npy(xfile).unwrap();
     let sort: ArrayD<f32> = read_npy(sortfile).unwrap();
     let y: ArrayD<i64> = read_npy(indexfile).unwrap();
 
     let result_indices = argsort_last_dim(&x);
     let result_indicesi64 = result_indices.mapv(|x| x as i64);
-    let result = sort_last_dim(&mut x);
+    let result = sort_last_dim(&x);
 
-    assert_abs_diff_eq!(x, sort, epsilon = 1e-5);
+    assert_abs_diff_eq!(result, sort, epsilon = 1e-5);
     assert_eq!(result_indicesi64, y);
 }
