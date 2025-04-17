@@ -3,8 +3,6 @@ use crate::functions::transpose::transpose_dims;
 use ndarray::Array;
 use ndarray::{ArrayD, IxDyn};
 
-// filepath: /media/john/Tertiary/Projects/ML/RustOps/src/functions/rearrange.rs
-
 /// Rearrange a 3D tensor with pattern 'batch mems flag -> mems (batch flag)'
 /// This is equivalent to einops' rearrange operation that reorders and reshapes dimensions.
 ///
@@ -14,9 +12,9 @@ use ndarray::{ArrayD, IxDyn};
 ///
 /// # Returns
 ///
-/// * `Ok(ArrayD<f32>)` - The rearranged array with shape [mems, batch*flag]
+/// * `Ok(ArrayD<T>)` - The rearranged array with shape [mems, batch*flag]
 /// * `Err(ReshapeError)` - If the reshape operation fails
-pub fn rearrange_batch_mems_flag(input: &ArrayD<f32>) -> Result<ArrayD<f32>, ReshapeError> {
+pub fn rearrange_batch_mems_flag<T: Clone>(input: &ArrayD<T>) -> Result<ArrayD<T>, ReshapeError> {
     // Check that input has 3 dimensions
     if input.ndim() != 3 {
         return Err(ReshapeError::IncompatibleShape);
@@ -34,6 +32,6 @@ pub fn rearrange_batch_mems_flag(input: &ArrayD<f32>) -> Result<ArrayD<f32>, Res
     let new_shape = vec![mems as i64, (batch * flag) as i64];
 
     // Use our reshape function to get the final result
-    let reshaped: ArrayD<f32> = reshape(&transposed, &new_shape)?;
+    let reshaped: ArrayD<T> = reshape(&transposed, &new_shape)?;
     Ok(reshaped)
 }

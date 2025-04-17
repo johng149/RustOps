@@ -11,7 +11,7 @@ use ndarray::{ArrayD, Axis, IxDyn};
 /// # Returns
 ///
 /// A new transposed ArrayD
-pub fn transpose_dims(arr: &ArrayD<f32>, dim1: usize, dim2: usize) -> ArrayD<f32> {
+pub fn transpose_dims<T: Clone>(arr: &ArrayD<T>, dim1: usize, dim2: usize) -> ArrayD<T> {
     let ndim = arr.ndim();
     let mut axes: Vec<usize> = (0..ndim).collect();
 
