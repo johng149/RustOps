@@ -74,7 +74,10 @@ where
     result
 }
 
-pub fn argsort_last_dim(arr: &ArrayD<f32>) -> ArrayD<usize> {
+pub fn argsort_last_dim<A>(arr: &ArrayD<A>) -> ArrayD<usize>
+where
+    A: PartialOrd + Clone,
+{
     // Get the shape of the input array
     let shape = arr.shape().to_vec();
 
@@ -92,12 +95,14 @@ pub fn argsort_last_dim(arr: &ArrayD<f32>) -> ArrayD<usize> {
     result
 }
 
-fn fill_result_recursive(
-    arr: &ArrayD<f32>,
+fn fill_result_recursive<A>(
+    arr: &ArrayD<A>,
     result: &mut ArrayD<usize>,
     indices: &mut Vec<usize>,
     shape: &[usize],
-) {
+) where
+    A: PartialOrd + Clone,
+{
     if indices.len() == shape.len() - 1 {
         // We've reached the penultimate dimension, now handle the last dimension
         let last_dim_size = shape.last().unwrap();
@@ -112,10 +117,10 @@ fn fill_result_recursive(
             let mut j_indices = indices.clone();
             j_indices.push(j);
 
-            let a = *arr.get(i_indices.as_slice()).unwrap();
-            let b = *arr.get(j_indices.as_slice()).unwrap();
+            let a = arr.get(i_indices.as_slice()).unwrap();
+            let b = arr.get(j_indices.as_slice()).unwrap();
 
-            a.partial_cmp(&b).unwrap_or(Ordering::Equal)
+            a.partial_cmp(b).unwrap_or(Ordering::Equal)
         });
 
         // Store the sorted indices in the result array
