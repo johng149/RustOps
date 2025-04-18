@@ -27,26 +27,16 @@ where
     A: Clone,
 {
     // Check that dimension is valid
-    if dim > input.ndim() {
+    if dim >= input.ndim() {
         return Err("Dimension index out of bounds");
     }
 
-    // First perform the equivalent of unsqueeze
-    let mut new_shape = input.shape().to_vec();
-    new_shape.insert(dim, 1);
-
-    // Reshape to add the new dimension
-    let unsqueezed = match input.clone().into_shape(IxDyn(&new_shape)) {
-        Ok(arr) => arr,
-        Err(_) => return Err("Failed to reshape tensor for unsqueeze operation"),
-    };
-
-    // Now build shape for the expansion
-    let mut expanded_shape = unsqueezed.shape().to_vec();
+    // Build shape for the expansion
+    let mut expanded_shape = input.shape().to_vec();
     expanded_shape[dim] = size;
 
     // Use broadcast to perform the expansion
-    let view = match unsqueezed.broadcast(IxDyn(&expanded_shape)) {
+    let view = match input.broadcast(IxDyn(&expanded_shape)) {
         Some(view) => view,
         None => return Err("Failed to broadcast tensor for expand operation"),
     };

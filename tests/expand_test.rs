@@ -1,4 +1,5 @@
 use RustOps::functions::expand;
+use RustOps::functions::unsqueeze;
 use ndarray::ArrayD;
 use ndarray_npy::read_npy;
 
@@ -68,7 +69,8 @@ fn test_expand_ndarray() {
         let size = expected.shape()[dim];
 
         // Perform the expansion
-        let result = expand::expand_at_dim(&x, dim, size).unwrap();
+        let unsqueezed_x = unsqueeze::unsqueeze(&x, dim);
+        let result = expand::expand_at_dim(&unsqueezed_x, dim, size).unwrap();
 
         // Verify the result
         assert_eq!(result.shape(), expected.shape());
