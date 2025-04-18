@@ -4,6 +4,7 @@ pub mod argmaxi;
 pub mod einsum;
 pub mod expand;
 pub mod gather;
+pub mod mark_reserved_indices;
 pub mod max;
 pub mod maxi;
 pub mod ones;
