@@ -24,7 +24,7 @@ pub fn expand_at_dim<A>(
     size: usize,
 ) -> Result<ArrayD<A>, &'static str>
 where
-    A: NdFloat + Clone,
+    A: Clone,
 {
     // Check that dimension is valid
     if dim > input.ndim() {
