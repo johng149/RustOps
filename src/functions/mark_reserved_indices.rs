@@ -21,29 +21,31 @@ pub fn mark_reserved_indices<T, U>(
 ) -> (ArrayD<i64>, ArrayD<i64>)
 where
     T: num_traits::Float + Clone + Debug + ScalarOperand,
-    U: Clone + Debug,
+    U: num_traits::PrimInt + Clone + Debug + ScalarOperand,
 {
-    let used_values = sort_last_dim(acts);
+    // let used_values = sort_last_dim(acts);
     let used_indices = argsort_last_dim(acts);
     let reservations = slice_last_dim(&used_indices).unwrap();
     let reservations = where_value(trigger_growth, &reservations, -1).unwrap();
     let reservations = rearrange_batch_mems_flag(&reservations).unwrap();
 
-    let sorts = sort_last_dim(&used_values);
+    // let sorts = sort_last_dim(&usages);
     let sort_indices: ndarray::ArrayBase<
         ndarray::OwnedRepr<i64>,
         ndarray::Dim<ndarray::IxDynImpl>,
-    > = argsort_last_dim(&used_values);
+    > = argsort_last_dim(&usages);
 
     let reservation_mask = &reservations.mapv(|x| x != -1);
 
     let expanded_usages = unsqueeze(&sort_indices, 1);
+
     let expanded_usages: ndarray::ArrayBase<
         ndarray::OwnedRepr<i64>,
         ndarray::Dim<ndarray::IxDynImpl>,
     > = expand_at_dim(&expanded_usages, 1, reservations.shape()[1]).unwrap();
 
-    let expanded_res = unsqueeze(&reservations, reservations.ndim() - 1);
+    let expanded_res = unsqueeze(&reservations, reservations.ndim());
+
     let expanded_res: ndarray::ArrayBase<
         ndarray::OwnedRepr<i64>,
         ndarray::Dim<ndarray::IxDynImpl>,
@@ -52,7 +54,7 @@ where
     let unsqueezed_mask: ndarray::ArrayBase<
         ndarray::OwnedRepr<bool>,
         ndarray::Dim<ndarray::IxDynImpl>,
-    > = unsqueeze(&reservation_mask, reservation_mask.ndim() - 1);
+    > = unsqueeze(&reservation_mask, reservation_mask.ndim());
 
     let comparison = Zip::from(&expanded_res)
         .and(&expanded_usages)
