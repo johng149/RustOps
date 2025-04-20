@@ -7,6 +7,7 @@ pub mod gather;
 pub mod mark_reserved_indices;
 pub mod max;
 pub mod maxi;
+pub mod move_to_back;
 pub mod ones;
 pub mod rearrange;
 pub mod reduce;
