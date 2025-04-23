@@ -1,6 +1,7 @@
 use crate::functions::einsum::einsum_ndarray_dyn;
 use crate::functions::ones::ones;
-use ndarray::{Array, ArrayD, Axis, Dimension, IntoDimension, IxDyn};
+use ndarray::{Array, ArrayD, Axis, Dimension, IntoDimension, IxDyn, NdFloat};
+use num_traits::One;
 
 /// Performs a reduction operation similar to einsum but with an array of ones.
 ///
@@ -12,9 +13,12 @@ use ndarray::{Array, ArrayD, Axis, Dimension, IntoDimension, IxDyn};
 /// # Returns
 ///
 /// A reduced array according to the specified equation.
-pub fn reduce(input: &ArrayD<f32>, equation: &str) -> Result<ArrayD<f32>, &'static str> {
+pub fn reduce<T>(input: &ArrayD<T>, equation: &str) -> Result<ArrayD<T>, &'static str>
+where
+    T: NdFloat + One + Copy,
+{
     // Create an array of ones with the same shape as the input
-    let ones_array = ones(input.shape());
+    let ones_array = Array::<T, _>::ones(input.shape());
 
     let tensors = [input, &ones_array];
     einsum_ndarray_dyn(equation, &tensors)
