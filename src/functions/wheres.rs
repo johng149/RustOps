@@ -12,12 +12,12 @@ use ndarray::{ArrayD, azip};
 ///
 /// # Returns
 ///
-/// A new ArrayD<f32> with the same shape as the input arrays
-pub fn where_op(
+/// A new ArrayD<T> with the same shape as the input arrays
+pub fn where_op<T: Clone>(
     condition: &ArrayD<bool>,
-    x: &ArrayD<f32>,
-    y: &ArrayD<f32>,
-) -> Result<ArrayD<f32>, String> {
+    x: &ArrayD<T>,
+    y: &ArrayD<T>,
+) -> Result<ArrayD<T>, String> {
     // Check that all arrays have the same shape
     if condition.shape() != x.shape() || condition.shape() != y.shape() {
         return Err(format!(
@@ -29,11 +29,13 @@ pub fn where_op(
     }
 
     // Create a new array to store the result
-    let mut result = ArrayD::zeros(condition.shape());
+    let mut result = x.clone();
 
     // Apply the where condition using azip! macro
-    azip!((r in &mut result, &cond in condition, &x_val in x, &y_val in y) {
-        *r = if cond { x_val } else { y_val };
+    azip!((r in &mut result, &cond in condition, y_val in y) {
+        if !cond {
+            *r = y_val.clone();
+        }
     });
 
     Ok(result)
