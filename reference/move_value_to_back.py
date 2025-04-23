@@ -7,12 +7,14 @@ def create_tensors(
         shape: Tuple[int, ...] | List[int] | Iterable[int],
         value = -2,
         dtype: torch.dtype = torch.int64,
+        x = None,
 ):
-    assert len(shape) == 2, "Shape must be 2D"
-    x = torch.randint(0, 4, shape, dtype=dtype)
-    # Randomly make some values equal to `value`
-    mask = torch.rand(shape) < 0.2  # 20% of values will be set to `value`
-    x[mask] = value
+    assert  (shape is None and x is not None) or len(shape) == 2, "Shape must be 2D"
+    if x is None:
+        x = torch.randint(0, 4, shape, dtype=dtype)
+        # Randomly make some values equal to `value`
+        mask = torch.rand(shape) < 0.2  # 20% of values will be set to `value`
+        x[mask] = value
 
     indices = (x == value).argsort(dim=-1, stable=True)
     return torch.gather(x, -1, indices), x

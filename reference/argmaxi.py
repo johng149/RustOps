@@ -9,8 +9,9 @@ def create_tensors(
         dtype: torch.dtype = torch.float32,
         dir: str = "data",
         name: str = "argmaxi",
+        x = None
 ):
-     x, max_indices, blank, gathered, scattered = create_tensors_maxi(shape, dtype)
+     x, max_indices, blank, gathered, scattered = create_tensors_maxi(shape, dtype, x=x)
      maxied = torch.abs(scattered)
      factors, _ = torch.max(maxied, dim=-1)
      factors = factors - eps

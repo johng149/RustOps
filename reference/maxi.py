@@ -3,8 +3,8 @@ from util.save_reference import save_reference
 from typing import Tuple, List, Iterable
 
 
-def create_tensors(shape: Tuple[int, ...] | List[int] | Iterable[int], dtype: torch.dtype = torch.float32):
-    x = torch.rand(shape, dtype=dtype)
+def create_tensors(shape: Tuple[int, ...] | List[int] | Iterable[int], dtype: torch.dtype = torch.float32, x=None):
+    x = torch.rand(shape, dtype=dtype) if x is None else x
     max_indices = torch.argmax(x, dim=-1, keepdim=True)
     blank = torch.zeros_like(x)
     gathered = torch.gather(x, -1, max_indices)
