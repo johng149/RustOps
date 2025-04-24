@@ -55,7 +55,6 @@ where
             new_shape.push(0); // Placeholder for now
         } else if dim < 0 {
             // Handle negative indices (counting from the end)
-            // Not applicable for reshape, but included for API compatibility
             return Err(ReshapeError::IncompatibleShape);
         } else {
             new_shape.push(dim as usize);
@@ -80,12 +79,11 @@ where
         return Err(ReshapeError::IncompatibleShape);
     }
 
-    // Perform the reshape
-    let reshaped = input.to_owned().into_shape(IxDyn(&new_shape))?;
-    Ok(Array::from_shape_vec(
-        IxDyn(&new_shape),
-        reshaped.iter().cloned().collect(),
-    )?)
+    // First flatten the array to 1D, then reshape to the target shape
+    // This handles dimension collapsing properly (PyTorch-like behavior)
+    let continguous = input.as_standard_layout().to_owned();
+    let flattened = continguous.into_shape(original_size).unwrap();
+    Ok(flattened.into_shape(IxDyn(&new_shape))?)
 }
 
 // Provide a conversion from ndarray's ShapeError to our ReshapeError
