@@ -25,7 +25,6 @@ where
 
     let numerator = einsum_ndarray_dyn("bfmd,bfd->bfm", &[&m, &x]).unwrap();
     let numerator = numerator.mapv(|value| value * T::from(0.5).unwrap());
-    let nclone = numerator.clone();
     let m_squared = m.mapv(|value| value * value);
     let x_squared = x.mapv(|value| value * value);
     let reduced_m = reduce(&m_squared, "bfmd,bfmd->bfm").unwrap();
@@ -33,11 +32,8 @@ where
     let reduced_x = reduce(&x_squared, "bfd,bfd->bf").unwrap();
     let reduced_x_unsqueezed = unsqueeze(&reduced_x, reduced_x.ndim());
     let x_norm = sqrt_ndarray(&reduced_x_unsqueezed);
-    let xnormclone = x_norm.clone();
-    let mnormclone = m_norm.clone();
 
     let denominator = m_norm * x_norm;
-    let denomclone = denominator.clone();
     let denominator = denominator + T::from(rho).unwrap();
     let ratio = numerator / denominator;
 

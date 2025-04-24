@@ -6,6 +6,7 @@ pub mod expand;
 pub mod expand_for_batches;
 pub mod gather;
 pub mod growth_argmaxi;
+pub mod hidden_forward_parallel;
 pub mod mark_reserved_indices;
 pub mod max;
 pub mod maxi;
