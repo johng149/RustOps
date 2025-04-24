@@ -11,6 +11,7 @@ pub mod max;
 pub mod maxi;
 pub mod move_to_back;
 pub mod ones;
+pub mod outer_forward_parallel;
 pub mod rearrange;
 pub mod reduce;
 pub mod reshape;
