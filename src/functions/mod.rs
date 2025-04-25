@@ -28,5 +28,6 @@ pub mod squeeze;
 pub mod sum;
 pub mod transpose;
 pub mod unsqueeze;
+pub mod up;
 pub mod wheres;
 pub mod zeros_like;
