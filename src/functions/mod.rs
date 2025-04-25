@@ -15,6 +15,7 @@ pub mod mem_delta;
 pub mod move_to_back;
 pub mod ones;
 pub mod outer_forward_parallel;
+pub mod outer_up;
 pub mod pred;
 pub mod rearrange;
 pub mod reduce;
