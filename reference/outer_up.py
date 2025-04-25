@@ -1,13 +1,10 @@
 import torch
 import einops
+from util.create_layers import LayerInfo
+from util.create_layers import create_layers
 from util.save_reference import save_reference
 from outer_forward_parallel import create_tensors as create_outer_forward_tensors
 from typing import Tuple, List, Iterable
-
-# note that this is pretty much the same as outer_forward_parallel, this is kept here
-# to maintain the 1 to 1 mapping with the functions in Rust.
-# the python implementation uses a class while the Rust implementation is functional,
-# so the interfaces are slightly different but the data used is the same.
 
 def create_tensors(
     batch_size: int,
@@ -42,7 +39,13 @@ def create_outer_up(
     dir: str = "data",
     name: str = "outer_up",
 ):
-    result, mems, xs, h_sub_l = create_tensors(batch_size, fields, memories, dim, rho, dtype, dir, name)
+    layers_info: List[LayerInfo] = [
+        LayerInfo(nodes=-1, memories=16),
+        LayerInfo(nodes=3, memories=32),
+        LayerInfo(nodes=1, memories=10)
+    ]
+    layers, layer_counts = create_layers(layers_info, fields, dim)
+    result, mems, xs, h_sub_l = create_tensors(batch_size, fields, memories, dim, rho, dtype, dir, name, mems=layers[0])
     save_reference(result, dir, f"{name}_result_rho{rho}")
     save_reference(mems, dir, f"{name}_mems_rho{rho}")
     save_reference(xs, dir, f"{name}_xs_rho{rho}")
@@ -51,7 +54,7 @@ def create_outer_up(
 if __name__ == "__main__":
     create_outer_up(
         batch_size=6,
-        fields=7,
+        fields=9,
         memories=8,
         dim=5,
         rho=1e-8,
