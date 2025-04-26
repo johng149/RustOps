@@ -73,11 +73,11 @@ class SparseHopfield(Module):
 
   @staticmethod
   def mark_reserved_indices(acts, usages, trigger_growth, mark=-2):
-    used_values, used_indices = torch.sort(acts, dim=-1)
+    used_values, used_indices = torch.sort(acts, dim=-1, stable=True)
     reservations = used_indices[:,:,-1:]
     reservations[trigger_growth] = -1
     reservations = einops.rearrange(reservations, 'batch mems flag -> mems (batch flag)')
-    sorts, sort_indices = torch.sort(usages, dim=-1)
+    sorts, sort_indices = torch.sort(usages, dim=-1, stable=True)
     sorts, sort_indices, reservations
     reservation_mask = reservations != -1
     expanded_usages = sort_indices.unsqueeze(1).expand(-1, reservations.size(1), -1)
@@ -106,7 +106,6 @@ class SparseHopfield(Module):
 
   @staticmethod
   def growth_argmaxi(x, counts, eps=1e-8, threshold=0.9):
-    # for now we assume batch_size is 1
     batch_size, nodes, mems = x.shape
     normal_path = SparseHopfield.argmaxi(x, eps)
     trigger_growth = torch.sum(x > threshold, dim=-1, keepdim=True) <= 0
@@ -243,7 +242,10 @@ class SparseHopfield(Module):
       h_sub_l = upwards[i]
       counts = self.layer_counts[i]
       downed = SparseHopfield.down_prop_parallel(downwards[-1],self.layers[i+1],h_sub_l,coeff)
+      print(f"At iteration {i}, downed is\n{downed}")
       h_sub_l_star, counts = SparseHopfield.growth_argmaxi(downed, counts, eps, self.growth_threshold)
+      print(f"At iteration {i}, h_sub_l_star is\n{h_sub_l_star}")
+      print(f"At iteration {i}, counts is\n{counts}")
       self.layer_counts[i] = counts
       downwards.append(h_sub_l_star)
     return downwards
