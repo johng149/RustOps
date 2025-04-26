@@ -20,6 +20,7 @@ pub mod pred;
 pub mod rearrange;
 pub mod reduce;
 pub mod reshape;
+pub mod root_down;
 pub mod scatter;
 pub mod slicing;
 pub mod sort;
