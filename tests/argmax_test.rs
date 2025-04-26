@@ -92,3 +92,18 @@ fn test_argmax_ndarray() {
         }
     }
 }
+
+use ndarray::IxDyn;
+
+#[test]
+fn test_argmax_allzeros() {
+    let x = ArrayD::<f32>::zeros(IxDyn(&[2, 3, 4]));
+    let dim = Some(2);
+    let keepdim = true;
+
+    // Expected output: all indices should be 0 since all values are equal
+    let expected_output = ArrayD::<i64>::zeros(IxDyn(&[2, 3, 1]));
+
+    let result = argmax::argmax(&x, dim, keepdim).unwrap();
+    assert_eq!(result, expected_output);
+}

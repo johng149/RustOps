@@ -13,8 +13,8 @@ pub enum ArgmaxError {
     InvalidAxis(usize), // Contains the axis index
 }
 
-/// Finds the indices (as i64) of the maximum values of an array along a given dimension.
-/// Mimics the behavior of PyTorch's `torch.argmax`.
+/// Finds the indices (as i64) of the **first** maximum values of an array along a given dimension.
+/// Mimics the behavior of PyTorch's `torch.argmax` regarding duplicate maximum values (returns the first index).
 ///
 /// # Arguments
 ///
@@ -29,7 +29,7 @@ pub enum ArgmaxError {
 ///
 /// # Returns
 ///
-/// * `Ok(Array<i64, IxDyn>)`: An array containing the indices (as `i64`) of the maximum values.
+/// * `Ok(Array<i64, IxDyn>)`: An array containing the indices (as `i64`) of the first maximum values.
 ///   The shape depends on `dim` and `keepdim`. The dimension type is `IxDyn` for flexibility.
 /// * `Err(ArgmaxError)`: If the input is invalid (e.g., empty, zero-sized dimension).
 ///
@@ -50,41 +50,67 @@ pub enum ArgmaxError {
 /// # NaN Handling Note
 ///
 /// This implementation uses `partial_cmp`. If the input contains NaN values, the behavior might
-/// differ slightly from PyTorch's `argmax`, which has specific NaN propagation/handling rules
-/// (often documented as returning the index of the first `NaN` if encountered, but observed
-/// behavior can sometimes prioritize non-NaN max values). This implementation will typically
-/// *not* select a NaN as the maximum unless forced by the `unwrap_or` fallback, and its
-/// position relative to other maximal values might affect the outcome if NaNs are present.
-/// For precise NaN handling matching PyTorch, a more complex comparison logic would be needed.
+/// differ slightly from PyTorch's `argmax`, which has specific NaN propagation/handling rules.
+/// This implementation will typically *not* select a NaN as the maximum unless it's the first
+/// element encountered and no larger non-NaN value is found later. If a comparison returns `None`
+/// (due to NaN), the existing maximum is kept.
 pub fn argmax<A, S, D>(
     input: &ArrayBase<S, D>,
     dim: Option<usize>,
     keepdim: bool,
 ) -> Result<Array<i64, IxDyn>, ArgmaxError>
-// <-- Changed return type to i64
 where
     A: PartialOrd + Copy,
     S: Data<Elem = A>,
     D: Dimension + RemoveAxis,
 {
-    // Handle the case where the input array itself is logically empty
+    // --- Helper function to find the index of the first max in an iterator ---
+    // Returns Option<(index, value)>
+    fn find_first_max<A: PartialOrd + Copy>(
+        iter: impl Iterator<Item = (usize, A)>,
+    ) -> Option<(usize, A)> {
+        iter.fold(None, |acc, (current_index, current_value)| {
+            match acc {
+                // If this is the first element we've seen, it's the best so far
+                None => Some((current_index, current_value)),
+                // We've seen elements before, compare current with the best found so far
+                Some((best_index_so_far, best_value_so_far)) => {
+                    // Use partial_cmp for comparison
+                    match current_value.partial_cmp(&best_value_so_far) {
+                        // If current value is strictly greater, update the best
+                        Some(Ordering::Greater) => Some((current_index, current_value)),
+                        // If current value is less, equal, or comparison is indeterminate (NaN),
+                        // keep the existing best (because we want the *first* max index).
+                        Some(Ordering::Less) | Some(Ordering::Equal) | None => {
+                            Some((best_index_so_far, best_value_so_far))
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    // Handle the case where the input array itself is logically empty when finding overall max
     if input.len() == 0 && dim.is_none() {
+        // Check explicitly because fold on empty iterator returns None, leading to the same error.
+        // This check might be slightly redundant but clarifies intent.
         return Err(ArgmaxError::EmptyInput);
     }
 
     match dim {
         // --- Case 1: Flattened argmax (dim is None) ---
         None => {
-            let (max_idx, _) = input
-                .iter()
-                .copied()
-                .enumerate()
-                .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap_or(Ordering::Less))
-                .ok_or(ArgmaxError::EmptyInput)?;
+            let first_max = find_first_max(input.iter().copied().enumerate());
 
-            // Return a 0-dimensional array containing the flat index, cast to i64
-            // Note: Potential panic if max_idx > i64::MAX on 32-bit systems (highly unlikely)
-            Ok(arr0(max_idx as i64).into_dyn()) // <-- Cast usize to i64 here
+            match first_max {
+                Some((max_idx, _)) => {
+                    // Return a 0-dimensional array containing the flat index, cast to i64
+                    // Note: Potential panic if max_idx > i64::MAX on 32-bit systems (highly unlikely)
+                    Ok(arr0(max_idx as i64).into_dyn()) // Cast usize to i64 here
+                }
+                // This case handles truly empty input arrays (input.len() == 0)
+                None => Err(ArgmaxError::EmptyInput),
+            }
         }
 
         // --- Case 2: Argmax along a specific axis (dim is Some) ---
@@ -98,6 +124,8 @@ where
             let dim_size = input.shape()[axis_idx];
 
             if dim_size == 0 {
+                // Although map_axis might handle this, explicitly check for clarity
+                // and to return the specific error type.
                 return Err(ArgmaxError::ZeroDimSize(axis_idx));
             }
 
@@ -105,19 +133,19 @@ where
             // The closure now returns i64.
             let result_no_keepdim: Array<i64, _> =
                 input.map_axis(axis, |view: ArrayView<A, Ix1>| {
-                    let (idx, _val) = view
-                        .iter()
-                        .copied()
-                        .enumerate()
-                        .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap_or(Ordering::Less))
-                        .unwrap(); // Safe due to dim_size > 0 check
+                    // Find the first maximum index within this 1D view
+                    let (idx, _val) = find_first_max(view.iter().copied().enumerate())
+                        .expect("Axis dimension size already checked to be non-zero"); // Safe due to dim_size > 0 check
+
                     // Note: Potential panic if idx > i64::MAX on 32-bit systems (highly unlikely)
-                    idx as i64 // <-- Cast usize to i64 here
+                    idx as i64 // Cast usize to i64 here
                 });
 
             if keepdim {
+                // Use insert_axis to add the dimension back with size 1
                 Ok(result_no_keepdim.insert_axis(axis).into_dyn())
             } else {
+                // The dimension is already removed by map_axis
                 Ok(result_no_keepdim.into_dyn())
             }
         }
