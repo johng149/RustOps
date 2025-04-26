@@ -242,10 +242,7 @@ class SparseHopfield(Module):
       h_sub_l = upwards[i]
       counts = self.layer_counts[i]
       downed = SparseHopfield.down_prop_parallel(downwards[-1],self.layers[i+1],h_sub_l,coeff)
-      print(f"At iteration {i}, downed is\n{downed}")
       h_sub_l_star, counts = SparseHopfield.growth_argmaxi(downed, counts, eps, self.growth_threshold)
-      print(f"At iteration {i}, h_sub_l_star is\n{h_sub_l_star}")
-      print(f"At iteration {i}, counts is\n{counts}")
       self.layer_counts[i] = counts
       downwards.append(h_sub_l_star)
     return downwards
