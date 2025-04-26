@@ -18,17 +18,11 @@ where
         (mm_shape[0], mm_shape[1], mm_shape[2], mm_shape[3]);
     let batch_size = parent_down_prop.shape()[0];
     let prediction = einsum_ndarray_dyn("ncmd,bnm->bncd", &[&mm, parent_down_prop]).unwrap();
-    println!("prediction shape: {:?}", prediction.shape());
-    println!(
-        "batch_size: {:?}, nodes: {:?}, children_per_node: {:?}, dim: {:?}",
-        batch_size, nodes, children_per_node, dim
-    );
     let proposed_shape = [
         batch_size as i64,
         (nodes * children_per_node) as i64,
         dim as i64,
     ];
-    println!("proposed shape: {:?}", proposed_shape);
     let prediction = reshape(
         &prediction,
         &[

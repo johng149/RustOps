@@ -75,14 +75,8 @@ where
             .last()
             .expect("downwards vector should not be empty");
         let downed = down_prop_parallel(&last_down, &layer, &h_sub_l, coeff);
-        println!("At iteration {}: downed = {:?}", i, downed);
         let (h_sub_l_star, updated_counts) =
             growth_argmaxi(&downed, counts, eps, growth_threshold, mark);
-
-        println!(
-            "At iteration {}: h_sub_l_star = {:?}, updated_counts = {:?}",
-            i, h_sub_l_star, updated_counts
-        );
 
         // Append the updated counts to the new_layer_counts vector
         new_layer_counts.push(updated_counts);
