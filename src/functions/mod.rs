@@ -18,6 +18,7 @@ pub mod ones;
 pub mod outer_forward_parallel;
 pub mod outer_up;
 pub mod pred;
+pub mod pred_down;
 pub mod pred_root_down;
 pub mod rearrange;
 pub mod reduce;
