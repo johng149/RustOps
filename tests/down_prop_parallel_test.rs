@@ -20,7 +20,7 @@ fn test_down_prop_parallel() {
     let coef = 0.5;
 
     // Call the Rust implementation
-    let result = down_prop_parallel(parent_h, parent_mm, child_h, coef);
+    let result = down_prop_parallel(&parent_h, &parent_mm, &child_h, coef);
 
     // Assert results match expected output
     assert_abs_diff_eq!(result, expected_result, epsilon = 1e-5);
