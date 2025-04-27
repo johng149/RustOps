@@ -85,5 +85,7 @@ where
     }
 
     // Return the collected results
+    // because of the way we pushed the new_layer_counts, we need to reverse it
+    new_layer_counts.reverse();
     (downwards, new_layer_counts)
 }

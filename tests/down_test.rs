@@ -124,10 +124,10 @@ fn test_down() {
     // Note: Python returns downwards as [root_star, ..., layer0_star]
     assert_abs_diff_eq!(result_downwards[0], expected_output_root, epsilon = 1e-5); // Root (Layer 2)
     assert_abs_diff_eq!(result_downwards[1], expected_output_1, epsilon = 1e-5); // Layer 1
-    // assert_abs_diff_eq!(result_downwards[2], expected_output_0, epsilon = 1e-5); // Layer 0
+    assert_abs_diff_eq!(result_downwards[2], expected_output_0, epsilon = 1e-5); // Layer 0
 
-    // // Compare updated counts (integer comparison)
-    // assert_eq!(result_updated_counts[0], expected_updated_counts0); // Layer 0 counts
-    // assert_eq!(result_updated_counts[1], expected_updated_counts1); // Layer 1 counts
-    // assert_eq!(result_updated_counts[2], expected_updated_counts2); // Layer 2 counts
+    // Compare updated counts (integer comparison)
+    assert_eq!(result_updated_counts[0], expected_updated_counts0); // Layer 0 counts
+    assert_eq!(result_updated_counts[1], expected_updated_counts1); // Layer 1 counts
+    assert_eq!(result_updated_counts[2], expected_updated_counts2); // Layer 2 counts
 }
