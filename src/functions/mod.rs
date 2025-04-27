@@ -19,6 +19,7 @@ pub mod move_to_back;
 pub mod ones;
 pub mod optim;
 pub mod optim_outer;
+pub mod optimize;
 pub mod outer_forward_parallel;
 pub mod outer_up;
 pub mod pred;
