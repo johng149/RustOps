@@ -34,7 +34,7 @@ fn test_delta_outer() {
     let outer_mm_vec = vec![layer0]; // Only the first element is needed
 
     // Call the Rust function
-    let actual_output = delta_outer::delta_outer(&downwards_vec, &outer_mm_vec, sensory_input);
+    let actual_output = delta_outer::delta_outer(&downwards_vec, &outer_mm_vec, &sensory_input);
 
     // Compare the actual output with the expected output
     assert_abs_diff_eq!(actual_output, expected_output, epsilon = 1e-5); // Adjust epsilon as needed

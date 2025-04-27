@@ -18,7 +18,7 @@ fn test_pred() {
     let expected_prediction: ArrayD<f32> = read_npy(prediction_file).unwrap();
 
     // Calculate using the Rust implementation
-    let prediction = pred::pred(&parent_down_prop, parent_mem_matrix);
+    let prediction = pred::pred(&parent_down_prop, &parent_mem_matrix);
 
     // Compare the result with expected output
     assert_abs_diff_eq!(prediction, expected_prediction, epsilon = 1e-5);

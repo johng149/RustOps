@@ -20,7 +20,7 @@ fn test_mem_delta() {
     let expected_delta: ArrayD<f32> = read_npy(expected_delta_file).unwrap();
 
     // Calculate using the Rust implementation
-    let delta = mem_delta::mem_delta(parent_down_prop, parent_mem_matrix, child_down_prop);
+    let delta = mem_delta::mem_delta(&parent_down_prop, &parent_mem_matrix, &child_down_prop);
 
     // Compare the result with expected output
     assert_abs_diff_eq!(delta, expected_delta, epsilon = 1e-5);
