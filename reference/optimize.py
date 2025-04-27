@@ -86,18 +86,18 @@ def create_optimize_tensors(
 
 if __name__ == "__main__":
     layers_info_3: List[LayerInfo] = [
-        LayerInfo(nodes=-1, memories=5), # Outer layer, nodes determined by fields
-        LayerInfo(nodes=4, memories=5),
-        LayerInfo(nodes=1, memories=5)  # Root layer
+        LayerInfo(nodes=-1, memories=16), # Outer layer, nodes determined by fields
+        LayerInfo(nodes=4, memories=32),
+        LayerInfo(nodes=1, memories=16)  # Root layer
     ]
     # fields = num_rows * chunks_per_row = 2 * 2 = 4
     # Layer 1 nodes (4) must divide fields (4) evenly. 4 % 4 == 0. OK.
     # Layer 2 nodes (1) must divide Layer 1 nodes (4) evenly. 4 % 1 == 0. OK.
     create_optimize_tensors(
-        batch_size=2,
-        chunk_length=3,
-        chunks_per_row=2,
-        num_rows=2, # fields = 4
+        batch_size=10,
+        chunk_length=32,
+        chunks_per_row=16,
+        num_rows=16, # fields = 4
         layers_info=layers_info_3,
         dir="data",
         name="optimize_3layer",

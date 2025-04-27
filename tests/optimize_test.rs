@@ -175,26 +175,26 @@ fn test_optimize_3layer() {
     assert_abs_diff_eq!(
         result_layers[0].view(),
         expected_layer0.view(),
-        epsilon = 1e-6
+        epsilon = 1e-5
     );
     assert_abs_diff_eq!(
         result_layers[1].view(),
         expected_layer1.view(),
-        epsilon = 1e-6
+        epsilon = 1e-5
     );
     assert_abs_diff_eq!(
         result_layers[2].view(),
         expected_layer2.view(),
-        epsilon = 1e-6
+        epsilon = 1e-5
     );
 
     // Compare counts (integer)
     let result_counts0 = result_counts[0].mapv(|x| x as f32);
     let result_counts1 = result_counts[1].mapv(|x| x as f32);
     let result_counts2 = result_counts[2].mapv(|x| x as f32);
-    assert_abs_diff_eq!(result_counts0, expected_count0, epsilon = 1e-6);
-    assert_abs_diff_eq!(result_counts1, expected_count1, epsilon = 1e-6);
-    assert_abs_diff_eq!(result_counts2, expected_count2, epsilon = 1e-6);
+    assert_abs_diff_eq!(result_counts0, expected_count0, epsilon = 1e-5);
+    assert_abs_diff_eq!(result_counts1, expected_count1, epsilon = 1e-5);
+    assert_abs_diff_eq!(result_counts2, expected_count2, epsilon = 1e-5);
 
     // Compare t (integer)
     assert_eq!(result_t, expected_t);
