@@ -17,6 +17,7 @@ pub mod maxi;
 pub mod mem_delta;
 pub mod move_to_back;
 pub mod ones;
+pub mod optim_outer;
 pub mod outer_forward_parallel;
 pub mod outer_up;
 pub mod pred;
