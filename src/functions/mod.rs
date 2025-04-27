@@ -25,6 +25,7 @@ pub mod outer_up;
 pub mod pred;
 pub mod pred_down;
 pub mod pred_root_down;
+pub mod predict;
 pub mod rearrange;
 pub mod reduce;
 pub mod reshape;

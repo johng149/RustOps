@@ -198,4 +198,10 @@ fn test_optimize_3layer() {
 
     // Compare t (integer)
     assert_eq!(result_t, expected_t);
+    // Compare growth threshold (floating point)
+    assert_abs_diff_eq!(
+        _result_growth_threshold,
+        final_growth_threshold,
+        epsilon = 1e-5
+    );
 }
