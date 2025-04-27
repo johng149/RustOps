@@ -41,7 +41,6 @@ where
 
     // Iterate downwards from the second-to-last layer to the first
     for i in (0..upwards.len() - 1).rev() {
-        println!("Iteration: {}", i);
         let h_sub_l = &upwards[i];
         let parent_h_star = downwards
             .last()
