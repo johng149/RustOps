@@ -1,6 +1,7 @@
 pub mod abs;
 pub mod argmax;
 pub mod argmaxi;
+pub mod delta_outer;
 pub mod down;
 pub mod down_prop_parallel;
 pub mod einsum;
