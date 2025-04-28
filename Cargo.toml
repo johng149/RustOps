@@ -14,6 +14,8 @@ ndarray_einsum_beta = "0.7.0"
 clap = { version = "4.2", features = ["derive"] }
 image = "0.25"
 anyhow = "1.0"
+ndarray-rand = "0.14"
+rand = "0.8"
 
 [dev-dependencies]
 approx = "0.4"

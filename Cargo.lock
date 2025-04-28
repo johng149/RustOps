@@ -13,8 +13,10 @@ dependencies = [
  "ndarray 0.15.6",
  "ndarray-linalg",
  "ndarray-npy",
+ "ndarray-rand",
  "ndarray_einsum_beta",
  "num-traits",
+ "rand",
  "rayon",
  "thiserror 2.0.12",
 ]
@@ -662,6 +664,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "libm"
+version = "0.2.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c9627da5196e5d8ed0b0495e61e518847578da83483c37288316d9b2e03a7f72"
+
+[[package]]
 name = "log"
 version = "0.4.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -782,6 +790,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "ndarray-rand"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "65608f937acc725f5b164dcf40f4f0bc5d67dc268ab8a649d3002606718c4588"
+dependencies = [
+ "ndarray 0.15.6",
+ "rand",
+ "rand_distr",
+]
+
+[[package]]
 name = "ndarray_einsum_beta"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -874,6 +893,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
 dependencies = [
  "autocfg",
+ "libm",
 ]
 
 [[package]]
@@ -1075,6 +1095,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
 dependencies = [
  "getrandom 0.2.15",
+]
+
+[[package]]
+name = "rand_distr"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "32cb0b9bc82b0a0876c2dd994a7e7a2683d3e7390ca40e6886785ef0c7e3ee31"
+dependencies = [
+ "num-traits",
+ "rand",
 ]
 
 [[package]]
