@@ -3,3 +3,4 @@
 *.pyc
 data/
 output_chunks/
+profile.json.gz
