@@ -1,4 +1,5 @@
 use RustOps::functions::einsum;
+use RustOps::functions::einsum_bfmd_bfd_bfm::einsum_bfmd_bfd_bfm_dyn;
 use approx::assert_abs_diff_eq;
 use ndarray::{Array, ArrayD, IxDyn};
 use ndarray_npy::read_npy;
@@ -17,6 +18,21 @@ fn test_einsum_ndarray_dyn_bfmd_bfd() {
     let tensors = [&x, &y];
     let result = einsum::einsum_ndarray_dyn("bfmd,bfd->bfm", &tensors).unwrap();
 
+    assert_abs_diff_eq!(result, z, epsilon = 1e-5);
+}
+
+#[test]
+fn test_einsum_ndarray_dyn_bfmd_bfd_specialized() {
+    // Test matrix multiplication as einsum: 'batch fields memories dim, batch fields dim -> batch fields memories'
+    let x_file = "data/einsum_batch_fields_memories_einsum_bfmd_bfd_x.npy";
+    let y_file = "data/einsum_batch_fields_memories_einsum_bfmd_bfd_y.npy";
+    let z_file = "data/einsum_batch_fields_memories_einsum_bfmd_bfd_z.npy";
+
+    let x: ArrayD<f32> = read_npy(x_file).unwrap();
+    let y: ArrayD<f32> = read_npy(y_file).unwrap();
+    let z: ArrayD<f32> = read_npy(z_file).unwrap();
+
+    let result = einsum_bfmd_bfd_bfm_dyn(&x.view(), &y.view()).unwrap();
     assert_abs_diff_eq!(result, z, epsilon = 1e-5);
 }
 

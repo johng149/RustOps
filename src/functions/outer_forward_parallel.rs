@@ -2,6 +2,7 @@ use ndarray::{ArrayD, NdFloat};
 use num_traits::Float;
 
 use super::einsum::{self, einsum_ndarray_dyn};
+use super::einsum_bfmd_bfd_bfm::einsum_bfmd_bfd_bfm_dyn;
 use super::expand::expand_at_dim;
 use super::reduce::reduce;
 use super::sqrt::sqrt_ndarray;
@@ -23,7 +24,8 @@ where
     };
     let x = xs.mapv(|value| value - T::from(0.5).unwrap());
 
-    let numerator = einsum_ndarray_dyn("bfmd,bfd->bfm", &[&m, &x]).unwrap();
+    // let numerator = einsum_ndarray_dyn("bfmd,bfd->bfm", &[&m, &x]).unwrap();
+    let numerator = einsum_bfmd_bfd_bfm_dyn(&m.view(), &x.view()).unwrap();
     let numerator = numerator.mapv(|value| value * T::from(0.5).unwrap());
     let m_squared = m.mapv(|value| value * value);
     let x_squared = x.mapv(|value| value * value);
