@@ -6,6 +6,7 @@ use super::gather::gather;
 use super::mark_reserved_indices::mark_reserved_indices;
 use super::move_to_back::move_to_back;
 use super::reduce::reduce;
+use super::reduce_specialized;
 use super::reshape::reshape;
 use super::scatter::scatter;
 use super::sum::sum_generic;
@@ -83,7 +84,8 @@ where
     .unwrap();
     let grown = where_op(&trigger_growth, &growth_path, &normal_path).unwrap();
 
-    let updated_counts = reduce(&grown, "bnm,bnm->nm").unwrap();
+    // let updated_counts = reduce(&grown, "bnm,bnm->nm").unwrap();
+    let updated_counts = reduce_specialized::reduce_bnm_to_nm(&grown.view()).unwrap();
     let updated_counts_leq_0 = updated_counts.mapv(|value| value <= T::zero());
     let updated_counts = updated_counts.mapv(|value| NumCast::from(value).unwrap_or(U::zero()));
     let updated_counts = where_op(&updated_counts_leq_0, &counts, &updated_counts).unwrap();

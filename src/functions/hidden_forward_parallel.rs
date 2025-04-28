@@ -1,6 +1,7 @@
 use super::expand::expand_at_dim;
 use super::maxi::maxi;
 use super::reduce::{self, reduce};
+use super::reduce_specialized;
 use super::reshape::reshape;
 use super::sqrt::sqrt_ndarray;
 use super::unsqueeze;
@@ -50,7 +51,8 @@ where
     // similarly for `hidden` and `h_mems`, we'll use `j` for `h_mems` and `h` for `hidden`
     let propagation = einsum_ndarray_dyn("bhcjk,bhck->bhj", &[&mm, &x]).unwrap();
     let x_squared = x.mapv(|value| value * value);
-    let reduced_x = reduce(&x_squared, "bhck,bhck->bh").unwrap();
+    // let reduced_x = reduce(&x_squared, "bhck,bhck->bh").unwrap();
+    let reduced_x = reduce_specialized::reduce_bhck_to_bh(&x_squared.view()).unwrap();
     let x_norm = sqrt_ndarray(&reduced_x);
 
     let x_norm = unsqueeze(&x_norm, x_norm.ndim());

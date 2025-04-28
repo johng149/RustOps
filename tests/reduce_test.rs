@@ -1,4 +1,5 @@
 use RustOps::functions::reduce;
+use RustOps::functions::reduce_specialized;
 use approx::assert_abs_diff_eq;
 use ndarray::{Array, ArrayD, IxDyn};
 use ndarray_npy::read_npy;
@@ -19,6 +20,20 @@ fn test_reduce_bnm_nm() {
 }
 
 #[test]
+fn test_reduce_bnm_nm_specialized() {
+    // Test matrix multiplication as einsum: 'batch fields memories dim, batch fields dim -> batch fields memories'
+    let x_file = "data/reduced_reduce_bnm_nm_reduce_sum_x.npy";
+    let y_file = "data/reduced_reduce_bnm_nm_reduce_sum_y.npy";
+
+    let x: ArrayD<f32> = read_npy(x_file).unwrap();
+    let y: ArrayD<f32> = read_npy(y_file).unwrap();
+
+    let result = reduce_specialized::reduce_bnm_to_nm(&x.view()).unwrap();
+
+    assert_abs_diff_eq!(result, y, epsilon = 1e-5);
+}
+
+#[test]
 fn test_reduce_bfmd_bfm() {
     // Test reduction: 'batch fields memories dim -> batch fields memories'
     let x_file = "data/reduced_batch_fields_memories_reduce_bfmd_bfm_x.npy";
@@ -29,6 +44,20 @@ fn test_reduce_bfmd_bfm() {
     let equation = "bfmd,bfmd->bfm";
 
     let result = reduce::reduce(&x, equation).unwrap();
+
+    assert_abs_diff_eq!(result, y, epsilon = 1e-5);
+}
+
+#[test]
+fn test_reduce_bfmd_bfm_specialized() {
+    // Test reduction: 'batch fields memories dim -> batch fields memories'
+    let x_file = "data/reduced_batch_fields_memories_reduce_bfmd_bfm_x.npy";
+    let y_file = "data/reduced_batch_fields_memories_reduce_bfmd_bfm_y.npy";
+
+    let x: ArrayD<f32> = read_npy(x_file).unwrap();
+    let y: ArrayD<f32> = read_npy(y_file).unwrap();
+
+    let result = reduce_specialized::reduce_bfmd_to_bfm(&x.view()).unwrap();
 
     assert_abs_diff_eq!(result, y, epsilon = 1e-5);
 }
@@ -49,6 +78,20 @@ fn test_reduce_bfd_bf() {
 }
 
 #[test]
+fn test_reduce_bfd_bf_specialized() {
+    // Test reduction: 'batch field dim -> batch field'
+    let x_file = "data/reduced_batch_field_reduce_bfd_bf_x.npy";
+    let y_file = "data/reduced_batch_field_reduce_bfd_bf_y.npy";
+
+    let x: ArrayD<f32> = read_npy(x_file).unwrap();
+    let y: ArrayD<f32> = read_npy(y_file).unwrap();
+
+    let result = reduce_specialized::reduce_bfd_to_bf(&x.view()).unwrap();
+
+    assert_abs_diff_eq!(result, y, epsilon = 1e-5);
+}
+
+#[test]
 fn test_reduce_bhccm_bh() {
     // Test reduction: 'batch hidden children c_mems -> batch hidden'
     let x_file = "data/reduced_batch_hidden_reduce_bhccm_bh_x.npy";
@@ -59,6 +102,20 @@ fn test_reduce_bhccm_bh() {
     let equation = "bhcm,bhcm->bh";
 
     let result = reduce::reduce(&x, equation).unwrap();
+
+    assert_abs_diff_eq!(result, y, epsilon = 1e-5);
+}
+
+#[test]
+fn test_reduce_bhccm_bh_specialized() {
+    // Test reduction: 'batch hidden children c_mems -> batch hidden'
+    let x_file = "data/reduced_batch_hidden_reduce_bhccm_bh_x.npy";
+    let y_file = "data/reduced_batch_hidden_reduce_bhccm_bh_y.npy";
+
+    let x: ArrayD<f32> = read_npy(x_file).unwrap();
+    let y: ArrayD<f32> = read_npy(y_file).unwrap();
+
+    let result = reduce_specialized::reduce_bhck_to_bh(&x.view()).unwrap();
 
     assert_abs_diff_eq!(result, y, epsilon = 1e-5);
 }

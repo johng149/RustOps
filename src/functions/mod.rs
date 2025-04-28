@@ -30,6 +30,7 @@ pub mod predict;
 pub mod prediction_error;
 pub mod rearrange;
 pub mod reduce;
+pub mod reduce_specialized;
 pub mod reshape;
 pub mod root_down;
 pub mod scatter;

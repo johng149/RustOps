@@ -1,12 +1,12 @@
-use ndarray::{ArrayD, NdFloat};
-use num_traits::Float;
-
 use super::einsum::{self, einsum_ndarray_dyn};
 use super::einsum_bfmd_bfd_bfm::einsum_bfmd_bfd_bfm_dyn;
 use super::expand::expand_at_dim;
 use super::reduce::reduce;
+use super::reduce_specialized;
 use super::sqrt::sqrt_ndarray;
 use super::unsqueeze::unsqueeze;
+use ndarray::{ArrayD, NdFloat};
+use num_traits::Float;
 
 pub fn outer_forward_parallel<T>(mems: ArrayD<T>, xs: ArrayD<T>, rho: f32) -> ArrayD<T>
 where
@@ -29,9 +29,11 @@ where
     let numerator = numerator.mapv(|value| value * T::from(0.5).unwrap());
     let m_squared = m.mapv(|value| value * value);
     let x_squared = x.mapv(|value| value * value);
-    let reduced_m = reduce(&m_squared, "bfmd,bfmd->bfm").unwrap();
+    // let reduced_m = reduce(&m_squared, "bfmd,bfmd->bfm").unwrap();
+    let reduced_m = reduce_specialized::reduce_bfmd_to_bfm(&m_squared.view()).unwrap();
     let m_norm = sqrt_ndarray(&reduced_m);
-    let reduced_x = reduce(&x_squared, "bfd,bfd->bf").unwrap();
+    // let reduced_x = reduce(&x_squared, "bfd,bfd->bf").unwrap();
+    let reduced_x = reduce_specialized::reduce_bfd_to_bf(&x_squared.view()).unwrap();
     let reduced_x_unsqueezed = unsqueeze(&reduced_x, reduced_x.ndim());
     let x_norm = sqrt_ndarray(&reduced_x_unsqueezed);
 
