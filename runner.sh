@@ -38,7 +38,7 @@ if [[ "$choice" != "1" && "$choice" != "2" ]]; then
 fi
 
 # Build the base command
-base_cmd="cargo run --"
+base_cmd="cargo run"
 
 # Handle chunk command
 if [ "$choice" == "1" ]; then
@@ -51,7 +51,7 @@ if [ "$choice" == "1" ]; then
     prompt_input "Directory to save the output chunks" output_dir
 
     # Construct the chunk command
-    cmd="$base_cmd chunk --input \"$input_path\" --target-width $target_width --target-height $target_height --chunk-width $chunk_width --chunk-height $chunk_height --output-dir \"$output_dir\""
+    cmd="$base_cmd -- chunk --input \"$input_path\" --target-width $target_width --target-height $target_height --chunk-width $chunk_width --chunk-height $chunk_height --output-dir \"$output_dir\""
 
 # Handle benchmark command
 elif [ "$choice" == "2" ]; then
@@ -59,9 +59,15 @@ elif [ "$choice" == "2" ]; then
     prompt_input "Batch size for the input tensor" batch_size "6"
     prompt_input "Number of chunks (fields/nodes in outer layer)" num_chunks "8"
     prompt_input "Dimension of each chunk (feature dimension)" chunk_dim "7"
+    read -p "Use release mode (optimized build)? [y/N]: " use_release
+
+    # Add --release flag if requested
+    if [[ "${use_release,,}" == "y" || "${use_release,,}" == "yes" ]]; then
+        base_cmd="$base_cmd --release"
+    fi
 
     # Construct the benchmark command
-    cmd="$base_cmd benchmark --batch-size $batch_size --num-chunks $num_chunks --chunk-dim $chunk_dim"
+    cmd="$base_cmd -- benchmark --batch-size $batch_size --num-chunks $num_chunks --chunk-dim $chunk_dim"
 fi
 
 # Execute the command
