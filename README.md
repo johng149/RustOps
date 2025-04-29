@@ -18,3 +18,6 @@ Number of chunks (fields/nodes in outer layer) [8]: 400
 Dimension of each chunk (feature dimension) [7]: 256
 Use release mode (optimized build)? [y/N]: y
 Run with samply profiler? [y/N]: y
+
+Did some tests, the PyTorch version (also on CPU) with the same network size and input size
+does the optimization step in about 100ms.
