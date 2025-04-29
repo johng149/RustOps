@@ -1,5 +1,5 @@
 use super::einsum::{self, einsum_ndarray_dyn};
-use super::einsum_bfmd_bfd_bfm::einsum_bfmd_bfd_bfm_dyn;
+use super::einsum_specialized::einsum_bfmd_bfd_bfm_dyn;
 use super::expand::expand_at_dim;
 use super::reduce::reduce;
 use super::reduce_specialized;

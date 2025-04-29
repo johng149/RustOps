@@ -6,7 +6,7 @@ pub mod delta_outer;
 pub mod down;
 pub mod down_prop_parallel;
 pub mod einsum;
-pub mod einsum_bfmd_bfd_bfm;
+pub mod einsum_specialized;
 pub mod expand;
 pub mod expand_for_batches;
 pub mod gather;

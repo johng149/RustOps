@@ -1,5 +1,5 @@
 use RustOps::functions::einsum;
-use RustOps::functions::einsum_bfmd_bfd_bfm::einsum_bfmd_bfd_bfm_dyn;
+use RustOps::functions::einsum_specialized::einsum_bfmd_bfd_bfm_dyn;
 use approx::assert_abs_diff_eq;
 use ndarray::{Array, ArrayD, IxDyn};
 use ndarray_npy::read_npy;
