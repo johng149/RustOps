@@ -1,3 +1,4 @@
+use super::einsum_specialized;
 use super::expand::expand_at_dim;
 use super::maxi::maxi;
 use super::reduce::{self, reduce};
@@ -49,7 +50,8 @@ where
     // we want the equation "batch hidden children h_mems c_mems, batch hidden children c_mems -> batch hidden h_mems"
     // however since `children` and `c_mems` both start with "c", we'll use `k` for `c_mems` and `c` for `children`,
     // similarly for `hidden` and `h_mems`, we'll use `j` for `h_mems` and `h` for `hidden`
-    let propagation = einsum_ndarray_dyn("bhcjk,bhck->bhj", &[&mm, &x]).unwrap();
+    // let propagation = einsum_ndarray_dyn("bhcjk,bhck->bhj", &[&mm, &x]).unwrap();
+    let propagation = einsum_specialized::einsum_bhcjk_bhck_bhj_dyn(&mm.view(), &x.view()).unwrap();
     let x_squared = x.mapv(|value| value * value);
     // let reduced_x = reduce(&x_squared, "bhck,bhck->bh").unwrap();
     let reduced_x = reduce_specialized::reduce_bhck_to_bh(&x_squared.view()).unwrap();

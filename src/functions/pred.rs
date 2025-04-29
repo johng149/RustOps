@@ -2,6 +2,7 @@ use ndarray::{ArrayD, NdFloat};
 use std::borrow::Cow;
 
 use super::einsum::einsum_ndarray_dyn;
+use super::einsum_specialized;
 use super::reshape::reshape;
 use super::unsqueeze::unsqueeze;
 
@@ -20,6 +21,11 @@ where
     let batch_size = parent_down_prop.shape()[0];
     let prediction =
         einsum_ndarray_dyn("ncmd,bnm->bncd", &[mm.as_ref(), parent_down_prop]).unwrap();
+    // let prediction =
+    //     einsum_specialized::einsum_ncmd_bnm_bncd_dyn(&mm.view(), &parent_down_prop.view()).unwrap();
+    // usually, the specialized einsum is faster, but in this case, empirically, the generic einsum
+    // is faster, I think it might have something to do with the shape of the arrays we happen to be
+    // using, but need to investigate more
     let prediction = reshape(
         &prediction,
         &[

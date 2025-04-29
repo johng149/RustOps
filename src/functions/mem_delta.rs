@@ -1,6 +1,7 @@
 use ndarray::{Array, ArrayD, NdFloat};
 
 use super::einsum::einsum_ndarray_dyn;
+use super::einsum_specialized;
 use super::pred::pred;
 use super::reshape::reshape;
 use super::unsqueeze::unsqueeze;
@@ -49,6 +50,11 @@ where
     )
     .unwrap();
     // einsum works with references
-    let delta = einsum_ndarray_dyn("bncd,bnm->ncmd", &[&error_reshaped, parent_down_prop]).unwrap();
+    // let delta = einsum_ndarray_dyn("bncd,bnm->ncmd", &[&error_reshaped, parent_down_prop]).unwrap();
+    let delta = einsum_specialized::einsum_bncd_bnm_ncmd_dyn(
+        &error_reshaped.view(),
+        &parent_down_prop.view(),
+    )
+    .unwrap();
     reshape(&delta, &shape).unwrap()
 }

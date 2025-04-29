@@ -4,6 +4,7 @@ use std::borrow::Cow;
 use std::fmt::Debug;
 
 use super::einsum::einsum_ndarray_dyn;
+use super::einsum_specialized;
 use super::expand::expand_at_dim;
 use super::reshape::reshape;
 use super::unsqueeze::unsqueeze;
@@ -52,8 +53,11 @@ where
     // `d` for `pdim`. Similarly, `children` and `cdim` has the same first letter, so we'll use `c` for `children` and use
     // `k` for `cdim`.
     // einsum takes references to the input arrays
-    let new_einsum = einsum_ndarray_dyn("bpcd,bpcdk->bpck", &[&argmaxi_parent_h, mm])
-        .expect("Einsum operation failed");
+    // let new_einsum = einsum_ndarray_dyn("bpcd,bpcdk->bpck", &[&argmaxi_parent_h, mm])
+    //     .expect("Einsum operation failed");
+    let new_einsum =
+        einsum_specialized::einsum_bpcd_bpcdk_bpck_dyn(&argmaxi_parent_h.view(), &mm.view())
+            .unwrap();
     // new_einsum is an owned ArrayD<T>
 
     // Scale the new component and reshape
