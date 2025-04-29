@@ -25,9 +25,10 @@ where
     // Use Cow to avoid cloning parent_mm if it already has the correct dimensions
     let mm_cow = if parent_mm.ndim() == 4 {
         let unsqueezed = unsqueeze(parent_mm, 0);
-        let expanded = expand_at_dim(&unsqueezed, 0, batch_size)
-            .expect("Failed to expand parent_mm at dimension 0");
-        Cow::Owned(expanded)
+        // let expanded = expand_at_dim(&unsqueezed, 0, batch_size)
+        //     .expect("Failed to expand parent_mm at dimension 0");
+        // Cow::Owned(expanded)
+        Cow::Owned(unsqueezed)
     } else {
         Cow::Borrowed(parent_mm)
     };
@@ -39,8 +40,9 @@ where
 
     // Unsqueeze and expand parent_h
     let unsqueezed_parent_h = unsqueeze(parent_h, parent_h.ndim() - 1);
-    let argmaxi_parent_h = expand_at_dim(&unsqueezed_parent_h, 2, children_per_parent)
-        .expect("Failed to expand parent_h at dimension 2");
+    // let argmaxi_parent_h = expand_at_dim(&unsqueezed_parent_h, 2, children_per_parent)
+    //     .expect("Failed to expand parent_h at dimension 2");
+    let argmaxi_parent_h = unsqueezed_parent_h;
     // argmaxi_parent_h is now an owned ArrayD<T>
 
     // Calculate original component scaled by coef

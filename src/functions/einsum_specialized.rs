@@ -101,73 +101,98 @@ where
 // Sum over 'd'
 //-------------------------------------------------------------------------
 pub fn einsum_bpcd_bpcdk_bpck_dyn<T>(
-    a: &ArrayViewD<T>, // bpcd
-    b: &ArrayViewD<T>, // bpcdk
+    a: &ArrayViewD<T>, // bpcd, potentially bpc=1d
+    b: &ArrayViewD<T>, // bpcdk, potentially bpc=1dk
 ) -> Result<ArrayD<T>, ShapeError>
 where
-    T: EinsumScalar,
+    T: EinsumScalar + num_traits::Zero, // Need Zero for sum
 {
     // 1. Get shapes and check dimensions
     let a_shape = a.shape();
     let b_shape = b.shape();
 
     if a.ndim() != 4 || b.ndim() != 5 {
-        panic!(
-            "Input arrays must have dimensions 4 and 5 respectively. Got {} and {}",
-            a.ndim(),
-            b.ndim()
-        );
+        return Err(ShapeError::from_kind(ndarray::ErrorKind::IncompatibleShape));
+        // panic!(
+        //     "Input arrays must have dimensions 4 and 5 respectively. Got {} and {}",
+        //     a.ndim(),
+        //     b.ndim()
+        // );
     }
 
-    // Check matching dimensions b, p, c, d
-    // a: (b, p, c, d)       -> indices 0, 1, 2, 3
-    // b: (b, p, c, d, k)    -> indices 0, 1, 2, 3, 4
-    if a_shape[0] != b_shape[0] // b
-        || a_shape[1] != b_shape[1] // p
-        || a_shape[2] != b_shape[2] // c
+    // Check matching dimensions p (1), d (3) - must be exact
+    if a_shape[1] != b_shape[1] // p
         || a_shape[3] != b_shape[3]
-    // d
+    // d (summation dim)
     {
-        panic!(
-            "Dimension mismatch: A({:?}), B({:?}). b (0), p (1), c (2), and d (3) dimensions must match.",
-            a_shape, b_shape
-        );
+        return Err(ShapeError::from_kind(ndarray::ErrorKind::IncompatibleShape));
+        // panic!(
+        //     "Dimension mismatch: A({:?}), B({:?}). p (1) and d (A[3], B[3]) dimensions must match.",
+        //     a_shape, b_shape
+        // );
     }
 
-    let b_dim = a_shape[0];
-    let p_dim = a_shape[1];
-    let c_dim = a_shape[2];
-    let d_dim = a_shape[3]; // Summation dimension
+    // Check broadcastable 'b' dimension (index 0)
+    let b_a = a_shape[0];
+    let b_b = b_shape[0];
+    if b_a != b_b && b_a != 1 && b_b != 1 {
+        return Err(ShapeError::from_kind(ndarray::ErrorKind::IncompatibleShape));
+        // panic!(
+        //     "Dimension mismatch: A({:?}), B({:?}). b (0) dimension must match ({}) or one must be 1 for broadcasting.",
+        //     a_shape, b_shape, cmp::max(b_a, b_b)
+        // );
+    }
+
+    // Check broadcastable 'c' dimension (index 2)
+    let c_a = a_shape[2];
+    let c_b = b_shape[2];
+    if c_a != c_b && c_a != 1 && c_b != 1 {
+        return Err(ShapeError::from_kind(ndarray::ErrorKind::IncompatibleShape));
+        // panic!(
+        //     "Dimension mismatch: A({:?}), B({:?}). c (2) dimension must match ({}) or one must be 1 for broadcasting.",
+        //     a_shape, b_shape, cmp::max(c_a, c_b)
+        // );
+    }
+
+    // Determine output dimensions based on broadcasting rules
+    let out_b_dim = cmp::max(b_a, b_b); // Output b dim is max due to broadcasting
+    let p_dim = a_shape[1]; // = b_shape[1]
+    let out_c_dim = cmp::max(c_a, c_b); // Output c dim is max due to broadcasting
+    let d_dim = a_shape[3]; // = b_shape[3], summation dimension
     let k_dim = b_shape[4]; // Dimension unique to b and output
 
     // 2. Reshape A to enable broadcasting with B's 'k' dimension
-    // a: (b, p, c, d) -> a_reshaped: (b, p, c, d, 1)
-    let a_reshaped_view = a.view().insert_axis(Axis(4));
+    // a: (b_a, p, c_a, d) -> a_reshaped: (b_a, p, c_a, d, 1)
+    // Use `into_shape` which returns a Result, allowing error propagation
+    let a_reshaped_view = a
+        .view()
+        .into_shape((b_a, p_dim, c_a, d_dim, 1)) // Use input dimensions b_a, c_a here
+        .map_err(|_| ShapeError::from_kind(ndarray::ErrorKind::IncompatibleShape))?; // Handle potential reshape error
 
-    // Ensure the reshaped dimensions are as expected (optional sanity check)
-    let expected_a_shape: &[usize] = &[b_dim, p_dim, c_dim, d_dim, 1];
-    assert_eq!(
-        a_reshaped_view.shape(),
-        expected_a_shape,
-        "Unexpected shape after reshaping A"
-    );
+    // B's shape is already (b_b, p, c_b, d, k)
 
     // 3. Element-wise multiplication with broadcasting
-    // A_reshaped (b,p,c,d,1) * B (b,p,c,d,k) -> Intermediate (b,p,c,d,k)
-    // Broadcasting happens along the last axis (k).
-    let intermediate = &a_reshaped_view * b; // Note: b is already a view
+    // A_reshaped (b_a, p, c_a, d, 1) * B (b_b, p, c_b, d, k) -> Intermediate (out_b_dim, p, out_c_dim, d, k)
+    // Broadcasting happens along 'b' (0), 'c' (2), and 'k' (4) axes.
+    let intermediate = &a_reshaped_view * b; // b is already a view
+
+    // Verify intermediate shape (optional debug check)
+    // assert_eq!(intermediate.shape(), &[out_b_dim, p_dim, out_c_dim, d_dim, k_dim]);
 
     // 4. Sum over the 'd' dimension (axis 3)
-    // Intermediate (b,p,c,d,k) -> Result (b,p,c,k)
+    // Intermediate (out_b_dim, p, out_c_dim, d, k) -> Result (out_b_dim, p, out_c_dim, k)
     let result = intermediate.sum_axis(Axis(3)); // Axis(3) corresponds to 'd'
 
     // Ensure the final shape is correct (optional sanity check)
-    let expected_result_shape: &[usize] = &[b_dim, p_dim, c_dim, k_dim];
-    assert_eq!(
-        result.shape(),
-        expected_result_shape,
-        "Unexpected final shape"
-    );
+    let expected_result_shape: &[usize] = &[out_b_dim, p_dim, out_c_dim, k_dim];
+    if result.shape() != expected_result_shape {
+        // This indicates an internal logic error if it happens
+        panic!(
+            "Internal error: Unexpected final shape. Expected {:?}, Got {:?}",
+            expected_result_shape,
+            result.shape()
+        );
+    }
 
     // 5. Convert result to ArrayD before returning
     Ok(result.into_dimensionality::<IxDyn>()?)
