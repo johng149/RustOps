@@ -20,6 +20,7 @@ rand = "0.8"
 [dev-dependencies]
 approx = "0.4"
 num-traits = "0.2"
+regex = "1.11.1"
 
 [profile.release]
 debug = true

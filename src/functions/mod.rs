@@ -1,6 +1,7 @@
 pub mod abs;
 pub mod argmax;
 pub mod argmaxi;
+pub mod chunking;
 pub mod delta;
 pub mod delta_outer;
 pub mod down;
