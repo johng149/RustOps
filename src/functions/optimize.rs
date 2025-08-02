@@ -40,9 +40,12 @@ use std::vec::Vec;
 /// # Panics
 /// Panics if any of the underlying functions (`up`, `down`, `delta`, `optim`) panic,
 /// for example due to empty inputs, mismatched dimensions, or numerical issues.
-pub fn optimize<T, U>(
+pub fn optimize<T>(
+    // TODO: after some testing, discovered that for incremental training to work properly,
+    // the counts need to be floating point numbers, as this is how we track which memory was used the least often
+    // in the pytorch implementation
     layers: &[ArrayD<T>],
-    layer_counts: &Vec<ArrayD<U>>,
+    layer_counts: &Vec<ArrayD<T>>,
     sensory_input: ArrayD<T>,
     t: usize,
     a: T,
@@ -51,7 +54,7 @@ pub fn optimize<T, U>(
     coeff: T,
     growth_threshold: T,
     mark: i64,
-) -> (Vec<ArrayD<T>>, Vec<ArrayD<U>>, usize, T)
+) -> (Vec<ArrayD<T>>, Vec<ArrayD<T>>, usize, T)
 where
     T: NdFloat
         + Float
@@ -62,7 +65,6 @@ where
         + ScalarOperand
         + Copy
         + FromPrimitive,
-    U: Clone + ToPrimitive + Zero + Debug + PrimInt + ScalarOperand,
 {
     // Clone sensory_input as both `up` and `delta` need it, and `up` takes ownership.
     let sensory_input_for_up = sensory_input.clone();

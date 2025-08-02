@@ -29,18 +29,17 @@ use std::fmt::Debug;
 ///
 /// # Panics
 /// Panics if `upwards`, `layer_counts`, or `layers` are empty or have inconsistent lengths.
-pub fn down<T, U>(
+pub fn down<T>(
     upwards: &Vec<ArrayD<T>>,
-    layer_counts: &Vec<ArrayD<U>>,
+    layer_counts: &Vec<ArrayD<T>>,
     layers: &[ArrayD<T>],
     eps: T,
     coeff: T,
     growth_threshold: T,
     mark: i64,
-) -> (Vec<ArrayD<T>>, Vec<ArrayD<U>>)
+) -> (Vec<ArrayD<T>>, Vec<ArrayD<T>>)
 where
     T: Float + NumCast + ToPrimitive + Debug + Clone + ScalarOperand + NdFloat,
-    U: Clone + ToPrimitive + Zero + Debug + PrimInt + ScalarOperand,
 {
     let num_layers = layers.len();
     if upwards.is_empty() || layer_counts.is_empty() || num_layers == 0 {
