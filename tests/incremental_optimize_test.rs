@@ -98,13 +98,13 @@ fn test_incremental_optimize_3layer() {
         initial_layer2.into_dyn(),
     ];
     let counts_step1 = vec![
-        initial_count0.mapv(|x| x as i64).into_dyn(),
-        initial_count1.mapv(|x| x as i64).into_dyn(),
-        initial_count2.mapv(|x| x as i64).into_dyn(),
+        initial_count0.into_dyn(),
+        initial_count1.into_dyn(),
+        initial_count2.into_dyn(),
     ];
     let input_step1 = sensory_input.slice(s![0..1, .., ..]).to_owned();
 
-    let (layers_step2, counts_step2, t_step2, growth_threshold_step2) = optimize::<f32, i64>(
+    let (layers_step2, counts_step2, t_step2, growth_threshold_step2) = optimize::<f32>(
         &layers_step1,
         &counts_step1,
         input_step1.into_dyn(),
@@ -122,7 +122,7 @@ fn test_incremental_optimize_3layer() {
     // --- Second Optimization Step (on remaining samples) ---
     let input_step2 = sensory_input.slice(s![1.., .., ..]).to_owned();
 
-    let (result_layers, result_counts, result_t, result_growth_threshold) = optimize::<f32, i64>(
+    let (result_layers, result_counts, result_t, result_growth_threshold) = optimize::<f32>(
         &layers_step2,
         &counts_step2,
         input_step2.into_dyn(),

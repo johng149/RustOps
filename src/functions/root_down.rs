@@ -17,16 +17,15 @@ use std::fmt::Debug;
 /// * A tuple containing:
 ///     * The resulting activation tensor after applying growth_argmaxi.
 ///     * The updated counts tensor resulting from growth_argmaxi.
-pub fn root_down<T, U>(
+pub fn root_down<T>(
     upwards: &Vec<ArrayD<T>>,
-    layer_counts: &Vec<ArrayD<U>>,
+    layer_counts: &Vec<ArrayD<T>>,
     eps: T,
     growth_threshold: T,
     mark: i64,
-) -> (ArrayD<T>, ArrayD<U>)
+) -> (ArrayD<T>, ArrayD<T>)
 where
     T: Float + NumCast + ToPrimitive + Debug + Clone + ScalarOperand + NdFloat,
-    U: Clone + ToPrimitive + Zero + Debug + num_traits::PrimInt + ScalarOperand,
 {
     // Get the last activation tensor
     let root_h_sub_l = upwards.last().expect("upwards vector should not be empty");

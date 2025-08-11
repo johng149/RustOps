@@ -14,7 +14,7 @@ def create_tensors(
         trigger = None
 ):
     x = torch.rand(shape, dtype=dtype) if acts is None else acts
-    y = torch.randint(0, 4, shape[1:], dtype=torch.int64) if counts is None else counts
+    y = torch.randint(0, 4, shape[1:], dtype=torch.float32) if counts is None else counts
     z = torch.randn(list(shape[:2]) + [1], dtype=dtype) > 0.5 if trigger is None else trigger
     used_values, used_indices = torch.sort(x, dim=-1)
     reservations = used_indices[:,:,-1:]

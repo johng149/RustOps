@@ -29,16 +29,15 @@ use std::fmt::Debug;
 ///
 /// # Returns
 /// * Indices of values with maximum growth potential
-pub fn growth_argmaxi<T, U>(
+pub fn growth_argmaxi<T>(
     x: &ArrayD<T>,
-    counts: &ArrayD<U>,
+    counts: &ArrayD<T>,
     eps: T,
     threshold: T,
     mark: i64,
-) -> (ArrayD<T>, ArrayD<U>)
+) -> (ArrayD<T>, ArrayD<T>)
 where
     T: Float + NumCast + ToPrimitive + Debug + Clone + ScalarOperand + NdFloat,
-    U: Clone + ToPrimitive + Zero + Debug + num_traits::PrimInt + ScalarOperand,
 {
     let x_shape = x.shape();
     let (batch_size, nodes, mems) = (x_shape[0], x_shape[1], x_shape[2]);
@@ -87,7 +86,7 @@ where
     // let updated_counts = reduce(&grown, "bnm,bnm->nm").unwrap();
     let updated_counts = reduce_specialized::reduce_bnm_to_nm(&grown.view()).unwrap();
     let updated_counts_leq_0 = updated_counts.mapv(|value| value <= T::zero());
-    let updated_counts = updated_counts.mapv(|value| NumCast::from(value).unwrap_or(U::zero()));
+    let updated_counts = updated_counts.mapv(|value| NumCast::from(value).unwrap_or(T::zero()));
     let updated_counts = where_op(&updated_counts_leq_0, &counts, &updated_counts).unwrap();
 
     // return both grown and updated_counts

@@ -36,15 +36,12 @@ fn test_down() {
 
     let initial_counts0: ArrayD<f32> =
         read_npy(initial_counts0_file).expect("Failed to read initial_counts0 data");
-    let initial_counts0 = initial_counts0.mapv(|x| x as i64);
 
     let initial_counts1: ArrayD<f32> =
         read_npy(initial_counts1_file).expect("Failed to read initial_counts1 data");
-    let initial_counts1 = initial_counts1.mapv(|x| x as i64);
 
     let initial_counts2: ArrayD<f32> =
         read_npy(initial_counts2_file).expect("Failed to read initial_counts2 data");
-    let initial_counts2 = initial_counts2.mapv(|x| x as i64);
 
     let layer0: ArrayD<f32> = read_npy(layer0_file).expect("Failed to read layer0 data");
     let layer1: ArrayD<f32> = read_npy(layer1_file).expect("Failed to read layer1 data");
@@ -79,15 +76,12 @@ fn test_down() {
 
     let expected_updated_counts0: ArrayD<f32> = read_npy(expected_updated_counts0_file)
         .expect("Failed to read expected_updated_counts0 data");
-    let expected_updated_counts0 = expected_updated_counts0.mapv(|x| x as i64);
 
     let expected_updated_counts1: ArrayD<f32> = read_npy(expected_updated_counts1_file)
         .expect("Failed to read expected_updated_counts1 data");
-    let expected_updated_counts1 = expected_updated_counts1.mapv(|x| x as i64);
 
     let expected_updated_counts2: ArrayD<f32> = read_npy(expected_updated_counts2_file)
         .expect("Failed to read expected_updated_counts2 data");
-    let expected_updated_counts2 = expected_updated_counts2.mapv(|x| x as i64);
 
     // Prepare inputs for the Rust function
     let upwards = vec![up0, up1, up2];
@@ -127,7 +121,7 @@ fn test_down() {
     assert_abs_diff_eq!(result_downwards[2], expected_output_0, epsilon = 1e-5); // Layer 0
 
     // Compare updated counts (integer comparison)
-    assert_eq!(result_updated_counts[0], expected_updated_counts0); // Layer 0 counts
-    assert_eq!(result_updated_counts[1], expected_updated_counts1); // Layer 1 counts
-    assert_eq!(result_updated_counts[2], expected_updated_counts2); // Layer 2 counts
+    assert_abs_diff_eq!(result_updated_counts[0], expected_updated_counts0); // Layer 0 counts
+    assert_abs_diff_eq!(result_updated_counts[1], expected_updated_counts1); // Layer 1 counts
+    assert_abs_diff_eq!(result_updated_counts[2], expected_updated_counts2); // Layer 2 counts
 }

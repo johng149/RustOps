@@ -116,14 +116,10 @@ fn test_optimize_3layer() {
         initial_layer2.into_dyn(),
     ];
 
-    let initial_count0_i64 = initial_count0.mapv(|x| x as i64);
-    let initial_count1_i64 = initial_count1.mapv(|x| x as i64);
-    let initial_count2_i64 = initial_count2.mapv(|x| x as i64);
-
     let layer_counts = vec![
-        initial_count0_i64.into_dyn(),
-        initial_count1_i64.into_dyn(),
-        initial_count2_i64.into_dyn(),
+        initial_count0.into_dyn(),
+        initial_count1.into_dyn(),
+        initial_count2.into_dyn(),
     ];
 
     // Values not saved by Python script, using defaults from SparseHopfield
@@ -154,7 +150,7 @@ fn test_optimize_3layer() {
     let mark: i64 = -2; // Default mark value
 
     // --- Execute the Rust optimize function ---
-    let (result_layers, result_counts, result_t, _result_growth_threshold) = optimize::<f32, i64>(
+    let (result_layers, result_counts, result_t, _result_growth_threshold) = optimize::<f32>(
         &layers,
         &layer_counts,
         sensory_input.into_dyn(),

@@ -12,14 +12,13 @@ fn test_growth_argmaxi() {
     let xfile = "data/growth_argmaxi_x.npy";
     let countsfile = "data/growth_argmaxi_counts.npy";
     let x: ArrayD<f32> = read_npy(xfile).unwrap();
-    let counts: ArrayD<i64> = read_npy(countsfile).unwrap();
+    let counts: ArrayD<f32> = read_npy(countsfile).unwrap();
 
     // Load expected output files
     let grown_file = "data/growth_argmaxi_grown.npy";
     let updated_counts_file = "data/growth_argmaxi_updated_counts.npy";
     let expected_grown: ArrayD<f32> = read_npy(grown_file).unwrap();
     let expected_updated_counts: ArrayD<f32> = read_npy(updated_counts_file).unwrap();
-    let expected_updated_countsi64 = expected_updated_counts.mapv(|x| x as i64);
 
     // Parameters from the Python implementation
     let eps = 1e-8;
@@ -31,5 +30,5 @@ fn test_growth_argmaxi() {
 
     // Assert results match expected outputs
     assert_abs_diff_eq!(grown, expected_grown, epsilon = 1e-5);
-    assert_eq!(updated_counts, expected_updated_countsi64);
+    assert_abs_diff_eq!(updated_counts, expected_updated_counts);
 }

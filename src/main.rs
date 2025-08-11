@@ -177,7 +177,7 @@ fn run_benchmark(args: BenchmarkArgs) -> Result<()> {
 
     // --- Type Aliases ---
     type T = f32; // Float type for activations/weights
-    type U = i64; // Integer type for counts
+    type U = f32; // Turns out counts needs to be float
 
     // --- Initialize Network State ---
     let fields = args.num_chunks;

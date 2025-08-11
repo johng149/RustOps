@@ -14,7 +14,7 @@ fn test_mark_reserved_indices() {
     let avail_ref: ArrayD<i64> = read_npy(avail_file).unwrap();
     let all_ref: ArrayD<i64> = read_npy(all_file).unwrap();
     let normal_ref: ArrayD<f32> = read_npy(normal_file).unwrap();
-    let counts_ref: ArrayD<i64> = read_npy(counts_file).unwrap();
+    let counts_ref: ArrayD<f32> = read_npy(counts_file).unwrap();
     let trigger_ref: ArrayD<bool> = read_npy(trigger_file).unwrap();
 
     let (avail, sort_indices) =

@@ -50,7 +50,7 @@ where
     }
 
     // Create vector to hold new layer counts
-    let mut new_layer_counts: Vec<ArrayD<U>> = Vec::with_capacity(num_layers);
+    let mut new_layer_counts: Vec<ArrayD<T>> = Vec::with_capacity(num_layers);
 
     // Create vector to hold new activations
     let mut downwards: Vec<ArrayD<T>> = Vec::with_capacity(num_layers);

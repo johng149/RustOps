@@ -22,8 +22,6 @@ fn test_root_down() {
     let initial_root_counts: ArrayD<f32> =
         read_npy(initial_root_counts_file).expect("Failed to read initial_root_counts data");
 
-    let initial_root_counts_i64 = initial_root_counts.mapv(|x| x as i64);
-
     // Load scalar inputs
     // read_npy loads scalars as 0-dimensional arrays
     let eps_array: ArrayD<f32> = read_npy(eps_file).expect("Failed to read eps data");
@@ -50,7 +48,6 @@ fn test_root_down() {
         read_npy(expected_output_file).expect("Failed to read expected output data");
     let expected_updated_counts: ArrayD<f32> = read_npy(expected_updated_counts_file)
         .expect("Failed to read expected updated counts data");
-    let expected_updated_counts_i64 = expected_updated_counts.mapv(|x| x as i64);
 
     // Prepare inputs for the Rust function
     // The root_down function expects Vecs, but only uses the last element of each.
@@ -58,7 +55,7 @@ fn test_root_down() {
     let upwards = vec![up0, up1, root_up];
     // IMPORTANT: root_down only uses the *last* element of layer_counts.
     // We load only the last count tensor saved by Python.
-    let layer_counts = vec![initial_root_counts_i64];
+    let layer_counts = vec![initial_root_counts];
     let mark: i64 = -1; // Assuming a default mark value used implicitly or explicitly in Python's growth_argmaxi
 
     // Calculate using the Rust implementation
@@ -70,5 +67,5 @@ fn test_root_down() {
     assert_abs_diff_eq!(result_output, expected_output, epsilon = 1e-5);
 
     // Compare counts tensor (integer)
-    assert_eq!(result_updated_counts, expected_updated_counts_i64);
+    assert_eq!(result_updated_counts, expected_updated_counts);
 }

@@ -13,15 +13,14 @@ use super::wheres::where_op;
 use super::wheres::where_value;
 use ndarray::{Array, ArrayD, Dimension, IxDyn, RemoveAxis, ScalarOperand};
 
-pub fn mark_reserved_indices<T, U>(
+pub fn mark_reserved_indices<T>(
     acts: &ArrayD<T>,
-    usages: &ArrayD<U>,
+    usages: &ArrayD<T>,
     trigger_growth: &ArrayD<bool>,
     mark: i64, // should use negative values such as -2 as otherwise may be mistaken for normal usage value
 ) -> (ArrayD<i64>, ArrayD<i64>)
 where
     T: num_traits::Float + Clone + Debug + ScalarOperand,
-    U: num_traits::PrimInt + Clone + Debug + ScalarOperand,
 {
     // let used_values = sort_last_dim(acts);
     let used_indices = argsort_last_dim(acts);

@@ -20,7 +20,7 @@ def create_tensors(
 ):
     assert len(shape) == 3, "Shape must be of length 3"
     x = torch.rand(shape, dtype=dtype) if x is None else x
-    counts = torch.randint(0, 4, shape[1:], dtype=torch.int64) if counts is None else counts
+    counts = torch.randint(0, 4, shape[1:], dtype=torch.float32) if counts is None else counts
     
     batch_size, nodes, mems = x.shape
 
